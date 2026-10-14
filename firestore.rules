@@ -1,0 +1,27 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid}/todos/{todoId} {
+      function isOwner() {
+        return request.auth != null && request.auth.uid == uid;
+      }
+      function validTodo() {
+        let data = request.resource.data;
+        return data.keys().hasAll(['title', 'done', 'createdAt'])
+          && data.keys().hasOnly(['title', 'done', 'createdAt'])
+          && data.title is string
+          && data.title.size() > 0 && data.title.size() <= 80
+          && data.title.matches('.*[^ ].*')
+          && data.done is bool
+          && data.createdAt is timestamp;
+      }
+      allow read, delete: if isOwner();
+      allow create: if isOwner() && validTodo()
+        && request.resource.data.done == false
+        && request.resource.data.createdAt == request.time;
+      allow update: if isOwner() && validTodo()
+        && request.resource.data.diff(resource.data)
+          .affectedKeys().hasOnly(['title', 'done']);
+    }
+  }
+}

@@ -1,0 +1,1111 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>7주차 · 코드 해설</title><style>body{margin:0;background:#f1f4f9;color:#102337;font:18px/1.75 system-ui}main{max-width:1050px;margin:30px auto;background:white;padding:45px}h1{font-size:34px}h2{margin-top:55px;padding-top:20px;border-top:2px solid #2459ef;color:#2459ef}h3{font-size:20px}a{color:#2459ef}pre{background:#102337;color:#edf3ff;padding:22px;white-space:pre-wrap;overflow-wrap:anywhere;font:15px/1.65 Menlo,monospace}img{max-width:100%;max-height:450px;object-fit:contain}summary{cursor:pointer;font-weight:600}details{margin:18px 0}.copy-snippet{font-size:14px;cursor:pointer;padding:7px 14px;background:#2459ef;color:white;border:0;border-radius:4px}li{margin:8px 0}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid #dce4ed;padding:10px;text-align:left}</style><body><main><h1>7주차 · 코드 해설</h1><p>슬라이드의 핵심 코드에 문법 풀이, 실행 순서, 실패 원인을 덧붙인 해설입니다. 예시의 입력값을 직접 대입하며 읽어 보세요.</p><nav aria-label="코드 해설 목차"><h2>코드 해설 목차</h2><ol><li><a href="#code1">A1 · 파일별 역할과 읽는 순서</a></li><li><a href="#code2">A2 · JSX와 React의 시작점</a></li><li><a href="#code3">A3 · 로그인 여부에 따른 화면 선택</a></li><li><a href="#code4">A4 · props로 UID를 전달하고 key로 구분</a></li><li><a href="#code5">A5 · useState와 입력값의 연결</a></li><li><a href="#code6">A6 · 입력 한 글자가 화면에 돌아오기까지</a></li><li><a href="#code7">A7 · Firebase 설정값으로 연결 만들기</a></li><li><a href="#code8">A8 · 설정 누락을 찾는 some과 !</a></li><li><a href="#code9">A9 · useEffect와 로그인 상태 관찰</a></li><li><a href="#code10">A10 · 관찰은 시작과 정리가 한 쌍</a></li><li><a href="#code11">A11 · 회원가입과 로그인 요청 선택</a></li><li><a href="#code12">A12 · await 이후는 성공과 실패로 갈립니다</a></li><li><a href="#code13">A13 · 연속 클릭을 막는 ref와 busy</a></li><li><a href="#code14">A14 · 함수 전달과 함수 호출을 구분하기</a></li><li><a href="#code15">A15 · 저장 성공 때만 입력을 비우기</a></li><li><a href="#code16">A16 · await를 빼면 왜 입력이 지워질까</a></li><li><a href="#code17">A17 · UID로 개인 컬렉션 경로 만들기</a></li><li><a href="#code18">A18 · 컬렉션과 문서를 주소로 구분</a></li><li><a href="#code19">A19 · onSnapshot으로 목록을 갱신</a></li><li><a href="#code20">A20 · 문서가 화면용 객체로 바뀌는 과정</a></li><li><a href="#code21">A21 · addDoc으로 할 일 생성</a></li><li><a href="#code22">A22 · cleanTitle을 세 입력으로 실행하기</a></li><li><a href="#code23">A23 · updateDoc과 deleteDoc의 차이</a></li><li><a href="#code24">A24 · 수정 전후: 바뀌는 필드만 보기</a></li><li><a href="#code25">A25 · 편집 시작과 저장 성공을 분리하기</a></li><li><a href="#code26">A26 · map과 key로 목록 표시</a></li><li><a href="#code27">A27 · filter와 length로 완료 개수 계산</a></li><li><a href="#code28">A28 · 오류 코드로 원인 좁히기</a></li><li><a href="#code29">A29 · Rules에서 문서 주인 확인</a></li><li><a href="#code30">A30 · 같은 경로에 세 사람이 요청하면</a></li><li><a href="#code31">A31 · Rules에서 필드와 자료형 검사</a></li><li><a href="#code32">A32 · 생성과 수정에 다른 조건 적용</a></li><li><a href="#code33">A33 · 수정 요청을 Rules처럼 판정해 보기</a></li><li><a href="#code34">A34 · Pages workflow의 실행 조건</a></li><li><a href="#code35">A35 · runner에 설정값 전달하고 빌드</a></li><li><a href="#code36">A36 · 배포 설정값도 빌드 전에 검사</a></li><li><a href="#code37">A37 · dist 전달과 Pages 게시</a></li><li><a href="#code38">A38 · Vite base와 URL 경로</a></li><li><a href="#code39">A39 · Nginx의 root와 index</a></li><li><a href="#code40">A40 · try_files로 파일과 화면 경로 처리</a></li><li><a href="#code41">A41 · 요청 URL이 서버 파일로 연결되는 과정</a></li><li><a href="#code42">A42 · 버튼 하나의 전체 실행 흐름</a></li></ol></nav><h2 id="code1"><a data-slide="63">A1 · 파일별 역할과 읽는 순서</a></h2><h3>개념 정의</h3><p>컴포넌트는 화면을 구성하는 함수이고, 커스텀 Hook은 상태와 연결 로직을 묶은 함수입니다.</p><h3>실행 예시</h3><p>화면을 먼저 읽고, 그 화면이 호출하는 함수로 이동합니다.</p><h3>코드를 읽는 순서</h3><h4>화면</h4><p>main.jsx → App.jsx → AuthPanel / TodoPanel</p><h4>연결</h4><p>firebase.js → useAuth.js / useTodos.js</p><h4>서버 규칙·배포</h4><p>firestore.rules → pages.yml → Nginx 설정</p><h3>조금 더 자세히</h3><p>App은 로그인 여부에 따라 화면을 고릅니다. AuthPanel은 인증 요청, TodoPanel은 할 일 입력과 표시를 맡습니다. useAuth와 useTodos는 각각 인증 상태와 문서 변화를 관찰합니다. Rules는 브라우저 밖 Firebase 서버에서 적용됩니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>호출 방향</h4><p>main.jsx가 App을 화면에 올립니다. App은 useAuth()의 반환값으로 화면을 고르고, 로그인했다면 TodoPanel에 uid를 전달합니다. TodoPanel은 useTodos(uid)를 호출해서 목록과 작업 함수를 받습니다. 파일을 읽을 때 import 문에서 다음 파일을 찾으세요.</p><h4>화면과 연결을 나눈 이유</h4><p>TodoPanel의 JSX는 무엇을 보여 줄지 결정합니다. useTodos는 어떤 경로를 관찰하고 어떤 요청을 보낼지 결정합니다. 버튼 모양을 바꾸면 컴포넌트, 조회 개수를 바꾸면 Hook을 먼저 살펴보면 됩니다.</p><h4>실행 위치</h4><p>React와 Firebase SDK는 사용자 브라우저에서 실행됩니다. firestore.rules는 Firebase 서버가 적용합니다. pages.yml은 GitHub runner가 실행하고, nginx-mini-todo.conf는 Ubuntu의 Nginx가 읽습니다. 모든 파일이 브라우저에서 실행되는 것은 아닙니다.</p><h2 id="code2"><a data-slide="64">A2 · JSX와 React의 시작점</a></h2><h3>개념 정의</h3><p>JSX는 JavaScript 안에서 화면 구조를 표현하는 문법입니다.</p><h3>실행 예시</h3><p>브라우저 진입 → main.jsx 실행 → App 화면 표시</p><h3>코드를 읽는 순서</h3><h4>시작 위치</h4><p>HTML의 id=&quot;app&quot; 요소를 찾습니다.</p><h4>render</h4><p>&lt;App /&gt;부터 React 화면을 만듭니다.</p><h4>StrictMode</h4><p>개발 중 연결·정리 로직을 추가 점검합니다.</p><h3>조금 더 자세히</h3><p>createRoot는 React가 관리할 DOM의 시작점을 정합니다. JSX의 &lt;App /&gt;는 App 함수를 통해 만든 컴포넌트를 뜻합니다. StrictMode는 개발 중 Effect의 설정과 정리를 추가 실행할 수 있으므로 관찰을 해제하는 코드가 필요합니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>document.getElementById(&#x27;app&#x27;)</h4><p>HTML에서 id가 app인 요소 하나를 찾습니다. 이 요소가 React 화면이 들어갈 자리입니다. HTML의 id와 코드의 문자열이 다르면 올바른 시작 요소를 얻지 못해 화면을 만들 수 없습니다.</p><h4>createRoot(...).render(...)</h4><p>createRoot는 그 요소에 React 루트를 만들고, render는 루트에 표시할 JSX를 전달합니다. &lt;App /&gt;의 대문자 App은 import한 컴포넌트입니다. &lt;div&gt;처럼 소문자로 쓰는 HTML 태그와 구분하세요.</p><h4>StrictMode의 범위</h4><p>개발 모드에서 렌더링과 Effect의 정리를 추가 점검합니다. 개발 중 관찰 시작 로그가 두 번 보인다고 바로 로그인 요청이 두 번 전송됐다고 결론 내리지 마세요. Effect의 관찰 등록과 버튼의 요청 함수를 구분해야 합니다.</p><details><summary>src/main.jsx 전체 코드</summary><pre>import { StrictMode } from &#x27;react&#x27;
+import { createRoot } from &#x27;react-dom/client&#x27;
+import App from &#x27;./App.jsx&#x27;
+import &#x27;./style.css&#x27;
+
+// StrictMode는 개발 중 Effect의 연결·정리가 올바른지 추가로 확인합니다.
+createRoot(document.getElementById(&#x27;app&#x27;)).render(
+  &lt;StrictMode&gt;&lt;App /&gt;&lt;/StrictMode&gt;,
+)
+</pre></details><p>공식 문서: <a href="https://react.dev/reference/react/StrictMode" target="_blank" rel="noopener">https://react.dev/reference/react/StrictMode</a></p><h2 id="code3"><a data-slide="65">A3 · 로그인 여부에 따른 화면 선택</a></h2><h3>개념 정의</h3><p>조건부 렌더링은 상태에 따라 표시할 화면을 선택하는 것입니다.</p><h3>실행 예시</h3><p>로그인 성공 알림 → user 갱신 → TodoPanel 표시</p><h3>코드를 읽는 순서</h3><h4>user 있음</h4><p>로그인한 계정 → TodoPanel</p><h4>user 없음</h4><p>로그아웃 상태 → AuthPanel</p><h4>준비 상태</h4><p>setupError·ready를 먼저 확인합니다.</p><h3>조금 더 자세히</h3><p>user의 초기값이 null이라고 곧바로 로그아웃이라고 판단하지 않습니다. Firebase의 첫 상태 알림을 받기 전에는 ready가 false이므로 확인 중 문구가 보입니다. 설정값 누락은 setupError 화면으로 구분합니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>조건 ? 참일 때 : 거짓일 때</h4><p>삼항 연산자는 조건을 평가해 둘 중 하나의 값을 선택합니다. 여기서는 user가 계정 객체이면 TodoPanel의 JSX를, null이면 AuthPanel의 JSX를 선택합니다. 물음표 뒤와 콜론 뒤를 각각 하나의 화면이라고 읽으세요.</p><h4>ready를 먼저 확인하는 이유</h4><p>앱을 처음 열면 user는 null이지만 Firebase가 저장된 로그인 상태를 아직 확인 중일 수 있습니다. ready가 false일 때는 확인 중 화면을 보여 줍니다. 첫 인증 알림을 받은 뒤에 로그인 화면 또는 할 일 화면을 선택합니다.</p><h4>화면이 바뀌는 계기</h4><p>AuthPanel이 직접 TodoPanel을 호출하는 것이 아닙니다. 인증 요청 후 onAuthStateChanged의 콜백이 setUser를 호출하고, App이 새 user 값으로 렌더링되면서 선택 결과가 바뀝니다.</p><details><summary>src/App.jsx 전체 코드</summary><pre>import { useState } from &#x27;react&#x27;
+import { signOut } from &#x27;firebase/auth&#x27;
+import { auth, setupError } from &#x27;./firebase&#x27;
+import { errorMessage } from &#x27;./errors&#x27;
+import { useAuth } from &#x27;./useAuth&#x27;
+import AuthPanel from &#x27;./components/AuthPanel.jsx&#x27;
+import TodoPanel from &#x27;./components/TodoPanel.jsx&#x27;
+
+export default function App() {
+  const { user, ready, message } = useAuth()
+  const [leaving, setLeaving] = useState(false)
+  const [sessionError, setSessionError] = useState(&#x27;&#x27;)
+
+  async function logout() {
+    if (leaving) return
+    setLeaving(true)
+    setSessionError(&#x27;&#x27;)
+    try { await signOut(auth) }
+    catch (error) { setSessionError(errorMessage(error)) }
+    finally { setLeaving(false) }
+  }
+
+  return (
+    &lt;main className=&quot;shell&quot;&gt;
+      &lt;header className=&quot;masthead&quot;&gt;
+        &lt;span&gt;WEEK 07 · MINI TODO&lt;/span&gt;&lt;span&gt;React + Firebase&lt;/span&gt;
+      &lt;/header&gt;
+      &lt;section className=&quot;intro&quot;&gt;
+        &lt;p className=&quot;eyebrow&quot;&gt;나에게 집중하는 작은 기록&lt;/p&gt;
+        &lt;h1&gt;나의 작은 할 일&lt;/h1&gt;
+        &lt;p&gt;오늘 할 일을 저장하고, 끝낸 일에 표시해 보세요.&lt;/p&gt;
+      &lt;/section&gt;
+      {setupError ? (
+        &lt;section className=&quot;panel&quot;&gt;
+          &lt;h2&gt;Firebase 연결 준비&lt;/h2&gt;
+          &lt;p&gt;.env.example을 .env.local로 복사한 뒤, Firebase 웹 앱의 설정값 4개를 입력하세요.&lt;/p&gt;
+          &lt;p&gt;파일을 저장하고 개발 서버를 다시 시작하면 로그인 화면이 나타납니다.&lt;/p&gt;
+        &lt;/section&gt;
+      ) : !ready ? (
+        &lt;p role=&quot;status&quot;&gt;로그인 상태를 확인하고 있습니다…&lt;/p&gt;
+      ) : (
+        &lt;&gt;
+          {user &amp;&amp; &lt;div className=&quot;account&quot;&gt;
+            &lt;span&gt;{user.email}&lt;/span&gt;
+            &lt;button className=&quot;quiet&quot; disabled={leaving} onClick={logout}&gt;로그아웃&lt;/button&gt;
+          &lt;/div&gt;}
+          {(message || sessionError) &amp;&amp; &lt;p role=&quot;alert&quot; className=&quot;error&quot;&gt;{message || sessionError}&lt;/p&gt;}
+          {/* [화면] 계정이 바뀌면 key도 바뀌어 이전 목록과 입력 상태를 새로 만듭니다. */}
+          {user
+            ? &lt;TodoPanel key={user.uid} uid={user.uid} /&gt;
+            : &lt;AuthPanel /&gt;}
+        &lt;/&gt;
+      )}
+      &lt;footer&gt;초급프로젝트 7주차 실습 · 사용자마다 자신의 할 일만 볼 수 있습니다.&lt;/footer&gt;
+    &lt;/main&gt;
+  )
+}
+</pre></details><h2 id="code4"><a data-slide="66">A4 · props로 UID를 전달하고 key로 구분</a></h2><h3>개념 정의</h3><p>props는 부모가 자식 컴포넌트에 전달하는 입력값입니다.</p><h3>실행 예시</h3><p>A → 로그아웃 → B: A의 입력 상태와 목록을 새로 초기화</p><h3>코드를 읽는 순서</h3><h4>uid prop</h4><p>TodoPanel({ uid })에서 전달받습니다.</p><h4>key</h4><p>계정이 바뀌면 이전 컴포넌트를 새로 만듭니다.</p><h4>역할 구분</h4><p>화면 초기화는 key, 접근 허용은 Rules가 맡습니다.</p><h3>조금 더 자세히</h3><p>uid는 Firestore 경로를 만드는 값입니다. key는 React가 컴포넌트의 동일성을 판단할 때 쓰며 일반 prop처럼 자식이 받는 값은 아닙니다. 계정별 화면 구분만으로 보안이 완성되지는 않으므로 Rules도 UID를 검사합니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>uid={user.uid}</h4><p>등호 오른쪽 중괄호 안은 JavaScript 표현식입니다. user.uid가 &quot;ABC&quot;라면 자식 컴포넌트는 uid라는 이름으로 &quot;ABC&quot;를 받습니다. TodoPanel({ uid })의 중괄호는 props 객체에서 uid 속성을 꺼내는 구조 분해 문법입니다.</p><h4>key={user.uid}</h4><p>key는 React가 컴포넌트의 동일성을 구분하는 특별한 값입니다. key가 달라지면 이전 인스턴스의 state를 유지하지 않고 새 인스턴스를 만듭니다. 일반 props로 전달되지 않으므로 자식에게 필요한 uid는 별도로 적습니다.</p><h4>경로 선택과 권한 판정</h4><p>uid로 users/ABC/todos라는 요청 경로를 만듭니다. 하지만 이 값은 브라우저에서 바꿀 수 있으므로, 서버 Rules가 request.auth.uid와 경로의 uid를 다시 비교해야 합니다.</p><details><summary>src/App.jsx 전체 코드</summary><pre>import { useState } from &#x27;react&#x27;
+import { signOut } from &#x27;firebase/auth&#x27;
+import { auth, setupError } from &#x27;./firebase&#x27;
+import { errorMessage } from &#x27;./errors&#x27;
+import { useAuth } from &#x27;./useAuth&#x27;
+import AuthPanel from &#x27;./components/AuthPanel.jsx&#x27;
+import TodoPanel from &#x27;./components/TodoPanel.jsx&#x27;
+
+export default function App() {
+  const { user, ready, message } = useAuth()
+  const [leaving, setLeaving] = useState(false)
+  const [sessionError, setSessionError] = useState(&#x27;&#x27;)
+
+  async function logout() {
+    if (leaving) return
+    setLeaving(true)
+    setSessionError(&#x27;&#x27;)
+    try { await signOut(auth) }
+    catch (error) { setSessionError(errorMessage(error)) }
+    finally { setLeaving(false) }
+  }
+
+  return (
+    &lt;main className=&quot;shell&quot;&gt;
+      &lt;header className=&quot;masthead&quot;&gt;
+        &lt;span&gt;WEEK 07 · MINI TODO&lt;/span&gt;&lt;span&gt;React + Firebase&lt;/span&gt;
+      &lt;/header&gt;
+      &lt;section className=&quot;intro&quot;&gt;
+        &lt;p className=&quot;eyebrow&quot;&gt;나에게 집중하는 작은 기록&lt;/p&gt;
+        &lt;h1&gt;나의 작은 할 일&lt;/h1&gt;
+        &lt;p&gt;오늘 할 일을 저장하고, 끝낸 일에 표시해 보세요.&lt;/p&gt;
+      &lt;/section&gt;
+      {setupError ? (
+        &lt;section className=&quot;panel&quot;&gt;
+          &lt;h2&gt;Firebase 연결 준비&lt;/h2&gt;
+          &lt;p&gt;.env.example을 .env.local로 복사한 뒤, Firebase 웹 앱의 설정값 4개를 입력하세요.&lt;/p&gt;
+          &lt;p&gt;파일을 저장하고 개발 서버를 다시 시작하면 로그인 화면이 나타납니다.&lt;/p&gt;
+        &lt;/section&gt;
+      ) : !ready ? (
+        &lt;p role=&quot;status&quot;&gt;로그인 상태를 확인하고 있습니다…&lt;/p&gt;
+      ) : (
+        &lt;&gt;
+          {user &amp;&amp; &lt;div className=&quot;account&quot;&gt;
+            &lt;span&gt;{user.email}&lt;/span&gt;
+            &lt;button className=&quot;quiet&quot; disabled={leaving} onClick={logout}&gt;로그아웃&lt;/button&gt;
+          &lt;/div&gt;}
+          {(message || sessionError) &amp;&amp; &lt;p role=&quot;alert&quot; className=&quot;error&quot;&gt;{message || sessionError}&lt;/p&gt;}
+          {/* [화면] 계정이 바뀌면 key도 바뀌어 이전 목록과 입력 상태를 새로 만듭니다. */}
+          {user
+            ? &lt;TodoPanel key={user.uid} uid={user.uid} /&gt;
+            : &lt;AuthPanel /&gt;}
+        &lt;/&gt;
+      )}
+      &lt;footer&gt;초급프로젝트 7주차 실습 · 사용자마다 자신의 할 일만 볼 수 있습니다.&lt;/footer&gt;
+    &lt;/main&gt;
+  )
+}
+</pre></details><h2 id="code5"><a data-slide="67">A5 · useState와 입력값의 연결</a></h2><h3>개념 정의</h3><p>state는 React가 렌더링 사이에 기억하는 값입니다.</p><h3>실행 예시</h3><p>a 입력 → setEmail(&quot;a&quot;) → value=&quot;a&quot;인 화면</p><h3>코드를 읽는 순서</h3><h4>email</h4><p>이번 렌더에서 입력창에 표시할 값</p><h4>onChange</h4><p>새 글자를 읽어 setEmail로 전달</p><h4>다음 렌더</h4><p>바뀐 state가 value에 반영됩니다.</p><h3>조금 더 자세히</h3><p>useState는 현재 값과 값을 변경할 함수를 반환합니다. setEmail을 호출해도 지금 실행 중인 함수의 email 변수가 즉시 바뀌는 것은 아닙니다. 변경은 다음 렌더에 반영됩니다. 입력창의 value와 변경 함수를 함께 연결한 방식을 제어 입력이라고 합니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>const [email, setEmail] = useState(&#x27;&#x27;)</h4><p>useState가 반환한 배열의 첫 값을 email, 두 번째 함수를 setEmail이라는 이름으로 꺼냅니다. 빈 문자열은 첫 렌더의 초기값입니다. 이 코드는 렌더 때마다 email을 빈 문자열로 초기화하라는 뜻이 아닙니다.</p><h4>event =&gt; setEmail(event.target.value)</h4><p>화살표 함수가 입력 이벤트를 받습니다. event.target은 입력 요소이고 value는 입력창의 현재 문자열입니다. 사용자가 abc를 입력하면 setEmail(&quot;abc&quot;)로 다음 렌더의 상태 갱신을 요청합니다.</p><h4>value와 onChange를 함께 쓰는 이유</h4><p>value={email}은 화면을 state에 맞추고, onChange는 사용자 입력을 state로 되돌려 보냅니다. value를 고정하고 변경 핸들러를 빠뜨리면 입력이 의도대로 바뀌지 않습니다. state 변수에 직접 대입하는 대신 setter를 호출해야 React에 변경을 알릴 수 있습니다.</p><details><summary>src/components/AuthPanel.jsx 전체 코드</summary><pre>import { useRef, useState } from &#x27;react&#x27;
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from &#x27;firebase/auth&#x27;
+import { auth } from &#x27;../firebase&#x27;
+import { errorMessage } from &#x27;../errors&#x27;
+
+export default function AuthPanel() {
+  // [입력] value는 상태를 표시하고 onChange는 입력한 값으로 상태를 바꿉니다.
+  const [email, setEmail] = useState(&#x27;&#x27;)
+  const [password, setPassword] = useState(&#x27;&#x27;)
+  const [isSignup, setIsSignup] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [message, setMessage] = useState(&#x27;&#x27;)
+  const pending = useRef(false)
+
+  async function submit(event) {
+    event.preventDefault() // 폼 제출 때문에 브라우저가 새로고침되지 않게 합니다.
+    if (pending.current) return
+    pending.current = true
+    setBusy(true)
+    setMessage(&#x27;&#x27;)
+    try {
+      // [로그인] 가입과 로그인의 요청 함수를 고릅니다. 화면 전환은 useAuth가 알립니다.
+      const action = isSignup
+        ? createUserWithEmailAndPassword
+        : signInWithEmailAndPassword
+      await action(auth, email.trim(), password)
+      setPassword(&#x27;&#x27;)
+    } catch (error) {
+      setMessage(errorMessage(error))
+    } finally {
+      pending.current = false
+      setBusy(false)
+    }
+  }
+
+  function changeMode() {
+    setIsSignup(previous =&gt; !previous)
+    setMessage(&#x27;&#x27;)
+    setPassword(&#x27;&#x27;)
+  }
+
+  return (
+    &lt;section className=&quot;panel auth-panel&quot;&gt;
+      &lt;div className=&quot;section-heading&quot;&gt;&lt;h2&gt;{isSignup ? &#x27;회원가입&#x27; : &#x27;로그인&#x27;}&lt;/h2&gt;&lt;span&gt;이메일 계정&lt;/span&gt;&lt;/div&gt;
+      &lt;form onSubmit={submit}&gt;
+        &lt;label htmlFor=&quot;email&quot;&gt;이메일&lt;/label&gt;
+        &lt;input id=&quot;email&quot; value={email} onChange={event =&gt; setEmail(event.target.value)}
+          type=&quot;email&quot; autoComplete=&quot;username&quot; required disabled={busy} /&gt;
+        &lt;label htmlFor=&quot;password&quot;&gt;비밀번호&lt;/label&gt;
+        &lt;input id=&quot;password&quot; value={password} onChange={event =&gt; setPassword(event.target.value)}
+          type=&quot;password&quot; required disabled={busy} minLength={isSignup ? 12 : 6}
+          autoComplete={isSignup ? &#x27;new-password&#x27; : &#x27;current-password&#x27;} /&gt;
+        &lt;p className=&quot;hint&quot;&gt;{isSignup ? &#x27;12자 이상으로 입력하세요. 프로젝트의 비밀번호 정책도 적용됩니다.&#x27; : &#x27;가입한 이메일과 비밀번호로 로그인하세요.&#x27;}&lt;/p&gt;
+        {message &amp;&amp; &lt;p className=&quot;error&quot; role=&quot;alert&quot;&gt;{message}&lt;/p&gt;}
+        &lt;button className=&quot;primary wide&quot; disabled={busy}&gt;{busy ? &#x27;처리 중…&#x27; : isSignup ? &#x27;계정 만들기&#x27; : &#x27;로그인&#x27;}&lt;/button&gt;
+      &lt;/form&gt;
+      &lt;button className=&quot;quiet mode&quot; disabled={busy} onClick={changeMode}&gt;
+        {isSignup ? &#x27;계정이 있나요? 로그인&#x27; : &#x27;처음인가요? 회원가입&#x27;}
+      &lt;/button&gt;
+    &lt;/section&gt;
+  )
+}
+</pre></details><p>공식 문서: <a href="https://react.dev/reference/react/useState" target="_blank" rel="noopener">https://react.dev/reference/react/useState</a></p><h2 id="code6"><a data-slide="68">A6 · 입력 한 글자가 화면에 돌아오기까지</a></h2><h3>정의</h3><p>렌더링은 현재 state로 화면에 표시할 내용을 다시 계산하는 과정입니다.</p><h4>① 처음 열기</h4><p>email = &quot;&quot; → 빈 입력창</p><h4>② a 입력</h4><p>event.target.value = &quot;a&quot; → setEmail(&quot;a&quot;)</p><h4>③ 다음 렌더</h4><p>email = &quot;a&quot; → value={email}에 반영</p><h3>직접 따라가기</h3><p>입력창에 a, ab, abc를 순서대로 넣으며 각 시점의 event.target.value를 예상해 보세요. setEmail 다음 줄에서 이전 렌더의 email을 읽으면 아직 이전 값입니다. setter는 다음 렌더를 요청하며 지금 실행 중인 변수 값을 직접 바꾸지 않습니다.</p><p>입력 → 이벤트 → state 변경 요청 → 다음 화면</p><h2 id="code7"><a data-slide="69">A7 · Firebase 설정값으로 연결 만들기</a></h2><h3>개념 정의</h3><p>SDK는 서비스에 요청할 때 사용하는 라이브러리입니다.</p><h3>실행 예시</h3><p>같은 프로젝트의 네 값 → auth와 db 생성</p><h3>코드를 읽는 순서</h3><h4>config</h4><p>네 값으로 사용할 Firebase 웹 앱을 지정</p><h4>auth</h4><p>회원가입·로그인 요청에 사용할 객체</p><h4>db</h4><p>Firestore 문서를 읽고 쓸 객체</p><h3>조금 더 자세히</h3><p>import.meta.env.VITE_ 이름의 값은 Vite가 제공합니다. setupError는 값이 비어 있거나 YOUR_ 예시값이 남았는지 검사합니다. 형식이 채워져 있다고 실제 연결이 성공했다는 뜻은 아닙니다. 비밀번호나 개인키를 VITE_ 변수에 넣지 않습니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>설정 객체의 왼쪽과 오른쪽</h4><p>apiKey는 Firebase SDK가 요구하는 속성 이름이고 import.meta.env.VITE_FIREBASE_API_KEY는 Vite 환경 변수에서 읽는 값입니다. .env.local의 변수 이름을 임의로 줄이면 이 코드가 읽지 못합니다.</p><h4>setupError ? null : initializeApp(config)</h4><p>누락 또는 YOUR_ 예시값이 있으면 앱 객체 대신 null을 선택합니다. 설정 검사를 통과하면 initializeApp으로 앱을 초기화합니다. getAuth(app)와 getFirestore(app)는 그 앱에 속한 서비스 객체를 얻습니다.</p><h4>설정 변경이 적용되는 시점</h4><p>개발 중 .env.local을 바꿨다면 Vite 개발 서버를 재시작합니다. 배포된 dist에는 빌드할 때의 값이 들어가므로 Secrets만 수정해도 기존 파일은 바뀌지 않습니다. 다시 빌드하고 게시해야 합니다.</p><details><summary>src/firebase.js 전체 코드</summary><pre>import { initializeApp } from &#x27;firebase/app&#x27;
+import { getAuth } from &#x27;firebase/auth&#x27;
+import { getFirestore } from &#x27;firebase/firestore&#x27;
+
+// [연결 1] Vite가 읽은 웹 앱 설정값으로 어느 Firebase 프로젝트인지 지정합니다.
+const config = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+}
+
+export const setupError = Object.values(config).some(
+  value =&gt; !value || value.includes(&#x27;YOUR_&#x27;),
+)
+// [연결 2] 인증(auth)과 데이터베이스(db)를 다른 파일에서도 가져다 쓰게 합니다.
+const app = setupError ? null : initializeApp(config)
+export const auth = app ? getAuth(app) : null
+export const db = app ? getFirestore(app) : null
+</pre></details><h2 id="code8"><a data-slide="70">A8 · 설정 누락을 찾는 some과 !</a></h2><h3>정의</h3><p>some은 배열에서 조건을 만족하는 값이 하나라도 있으면 true를 반환합니다.</p><h4>Object.values(config)</h4><p>네 설정값을 배열로 꺼냅니다.</p><h4>!value</h4><p>빈 문자열 또는 undefined인지 확인합니다.</p><h4>includes(&#x27;YOUR_&#x27;)</h4><p>예시 문구가 남았으면 설정 오류로 봅니다.</p><h3>직접 따라가기</h3><p>!value || value.includes(...)는 왼쪽이 true이면 오른쪽을 실행하지 않습니다. 값이 undefined일 때 includes를 호출하는 오류도 피합니다. 네 값이 채워졌다고 Firebase가 유효성을 승인한 것은 아닙니다.</p><p>하나라도 누락 → setupError = true → 연결 안내 표시</p><h3>코드</h3><pre>export const setupError = Object.values(config).some(
+  value =&gt; !value || value.includes(&#x27;YOUR_&#x27;),
+)</pre><h2 id="code9"><a data-slide="71">A9 · useEffect와 로그인 상태 관찰</a></h2><h3>개념 정의</h3><p>Effect는 컴포넌트를 외부 시스템과 연결하고 정리하는 로직입니다.</p><h3>실행 예시</h3><p>로그인·로그아웃 알림 → setUser → App 재렌더</p><h3>코드를 읽는 순서</h3><h4>관찰 시작</h4><p>onAuthStateChanged가 현재 계정을 알려 줍니다.</p><h4>상태 반영</h4><p>user와 ready를 갱신해 화면을 바꿉니다.</p><h4>정리</h4><p>return unsubscribe로 관찰을 해제합니다.</p><h3>조금 더 자세히</h3><p>콜백은 나중에 상태가 바뀔 때 SDK가 호출할 함수입니다. unsubscribe는 관찰을 끝내는 함수입니다. Effect에서 반환하면 React가 컴포넌트 제거 시 호출합니다. 이 샘플의 빈 의존성 배열 []은 바뀌는 prop/state에 의존하지 않음을 나타냅니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>콜백 함수의 실행 시점</h4><p>currentUser =&gt; { ... }를 작성할 때 즉시 그 내용이 실행되는 것이 아닙니다. onAuthStateChanged에 함수를 전달해 두면 SDK가 초기 인증 상태와 이후 변화를 알릴 때 호출합니다. 계정이 없으면 currentUser는 null입니다.</p><h4>setUser · setMessage · setReady</h4><p>setUser는 확인한 계정을 저장하고 setMessage는 이전 오류를 비웁니다. setReady(true)는 첫 확인이 끝났다고 알립니다. 오류 콜백도 ready를 true로 만들어 확인 중 화면에 계속 남는 것을 막습니다.</p><h4>return unsubscribe와 return unsubscribe()</h4><p>Effect는 정리 함수를 반환해야 합니다. 괄호 없이 반환하면 React가 정리 시점에 호출합니다. 여기서 unsubscribe()를 즉시 호출하면 등록한 관찰이 곧바로 끝납니다. []는 이 Effect가 바뀌는 props나 state를 의존하지 않는다는 표시입니다.</p><details><summary>src/useAuth.js 전체 코드</summary><pre>import { useEffect, useState } from &#x27;react&#x27;
+import { onAuthStateChanged } from &#x27;firebase/auth&#x27;
+import { auth, setupError } from &#x27;./firebase&#x27;
+import { errorMessage } from &#x27;./errors&#x27;
+
+export function useAuth() {
+  const [user, setUser] = useState(null)
+  const [ready, setReady] = useState(false)
+  const [message, setMessage] = useState(&#x27;&#x27;)
+
+  // [인증 1] 로그인 상태는 Firebase가 알려주는 현재 계정을 기준으로 합니다.
+  useEffect(() =&gt; {
+    if (setupError) return
+    const unsubscribe = onAuthStateChanged(auth, currentUser =&gt; {
+      setUser(currentUser)
+      setMessage(&#x27;&#x27;)
+      setReady(true)
+    }, error =&gt; {
+      setUser(null)
+      setMessage(errorMessage(error))
+      setReady(true)
+    })
+    // [인증 2] 화면 제거 시 관찰을 끝냅니다. StrictMode의 재연결에도 대응합니다.
+    return unsubscribe
+  }, [])
+
+  return { user, ready, message }
+}
+</pre></details><p>공식 문서: <a href="https://react.dev/reference/react/useEffect" target="_blank" rel="noopener">https://react.dev/reference/react/useEffect</a></p><h2 id="code10"><a data-slide="72">A10 · 관찰은 시작과 정리가 한 쌍</a></h2><h3>정의</h3><p>구독은 결과가 달라질 때마다 알림을 받도록 함수를 등록하는 것입니다.</p><h4>시작</h4><p>화면 등장 → onAuthStateChanged 등록</p><h4>알림</h4><p>초기 계정·로그인·로그아웃 → 콜백 실행</p><h4>정리</h4><p>화면 제거 → 반환한 unsubscribe 실행</p><h3>직접 따라가기</h3><p>SDK는 unsubscribe라는 이름을 강제하지 않습니다. 반환받은 관찰 해제 함수를 이 이름으로 저장한 것입니다. Effect가 반환한 함수를 React가 필요한 시점에 실행합니다. 개발 StrictMode의 추가 설정·정리 점검에서도 이 쌍이 맞아야 합니다.</p><p>return unsubscribe: 나중에 정리 · unsubscribe(): 지금 해제</p><h2 id="code11"><a data-slide="73">A11 · 회원가입과 로그인 요청 선택</a></h2><h3>개념 정의</h3><p>async 함수의 await는 비동기 요청이 끝난 뒤 다음 처리를 이어갑니다.</p><h3>실행 예시</h3><p>요청 성공 → 인증 상태 알림 → 로그인 화면 전환</p><h3>코드를 읽는 순서</h3><h4>가입 모드</h4><p>createUserWithEmailAndPassword 선택</p><h4>로그인 모드</h4><p>signInWithEmailAndPassword 선택</p><h4>성공 후</h4><p>비밀번호 입력을 비우고 인증 알림을 기다립니다.</p><h3>조금 더 자세히</h3><p>await는 전체 브라우저를 멈추지 않습니다. 요청이 실패하면 catch로 이동해 오류를 표시하고 finally에서 busy를 해제합니다. submit의 preventDefault는 폼 제출로 페이지가 새로고침되는 것을 막습니다. 회원가입 최소 12자는 이 샘플의 입력 규칙입니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>함수 자체를 선택하기</h4><p>isSignup이 true이면 action에 회원가입 함수를, false이면 로그인 함수를 담습니다. 함수 이름 뒤에 괄호가 없는 이 선택 단계에서는 아직 요청하지 않습니다. 다음 줄의 action(auth, email.trim(), password)에서 실제 호출합니다.</p><h4>await의 성공과 실패</h4><p>호출이 반환한 Promise가 성공하면 setPassword(&#x27;&#x27;)로 이어집니다. 거부되면 같은 try 안의 남은 줄을 건너뛰고 catch로 이동합니다. await 중에도 브라우저는 화면을 그리고 다른 이벤트를 처리할 수 있습니다.</p><h4>trim의 적용 대상</h4><p>email.trim()은 이메일 앞뒤 공백을 제거합니다. 비밀번호는 사용자가 입력한 문자열 그대로 보냅니다. 비밀번호에 임의로 trim을 적용하면 가입 때와 다른 비밀번호로 인증할 수 있습니다.</p><details><summary>src/components/AuthPanel.jsx 전체 코드</summary><pre>import { useRef, useState } from &#x27;react&#x27;
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from &#x27;firebase/auth&#x27;
+import { auth } from &#x27;../firebase&#x27;
+import { errorMessage } from &#x27;../errors&#x27;
+
+export default function AuthPanel() {
+  // [입력] value는 상태를 표시하고 onChange는 입력한 값으로 상태를 바꿉니다.
+  const [email, setEmail] = useState(&#x27;&#x27;)
+  const [password, setPassword] = useState(&#x27;&#x27;)
+  const [isSignup, setIsSignup] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [message, setMessage] = useState(&#x27;&#x27;)
+  const pending = useRef(false)
+
+  async function submit(event) {
+    event.preventDefault() // 폼 제출 때문에 브라우저가 새로고침되지 않게 합니다.
+    if (pending.current) return
+    pending.current = true
+    setBusy(true)
+    setMessage(&#x27;&#x27;)
+    try {
+      // [로그인] 가입과 로그인의 요청 함수를 고릅니다. 화면 전환은 useAuth가 알립니다.
+      const action = isSignup
+        ? createUserWithEmailAndPassword
+        : signInWithEmailAndPassword
+      await action(auth, email.trim(), password)
+      setPassword(&#x27;&#x27;)
+    } catch (error) {
+      setMessage(errorMessage(error))
+    } finally {
+      pending.current = false
+      setBusy(false)
+    }
+  }
+
+  function changeMode() {
+    setIsSignup(previous =&gt; !previous)
+    setMessage(&#x27;&#x27;)
+    setPassword(&#x27;&#x27;)
+  }
+
+  return (
+    &lt;section className=&quot;panel auth-panel&quot;&gt;
+      &lt;div className=&quot;section-heading&quot;&gt;&lt;h2&gt;{isSignup ? &#x27;회원가입&#x27; : &#x27;로그인&#x27;}&lt;/h2&gt;&lt;span&gt;이메일 계정&lt;/span&gt;&lt;/div&gt;
+      &lt;form onSubmit={submit}&gt;
+        &lt;label htmlFor=&quot;email&quot;&gt;이메일&lt;/label&gt;
+        &lt;input id=&quot;email&quot; value={email} onChange={event =&gt; setEmail(event.target.value)}
+          type=&quot;email&quot; autoComplete=&quot;username&quot; required disabled={busy} /&gt;
+        &lt;label htmlFor=&quot;password&quot;&gt;비밀번호&lt;/label&gt;
+        &lt;input id=&quot;password&quot; value={password} onChange={event =&gt; setPassword(event.target.value)}
+          type=&quot;password&quot; required disabled={busy} minLength={isSignup ? 12 : 6}
+          autoComplete={isSignup ? &#x27;new-password&#x27; : &#x27;current-password&#x27;} /&gt;
+        &lt;p className=&quot;hint&quot;&gt;{isSignup ? &#x27;12자 이상으로 입력하세요. 프로젝트의 비밀번호 정책도 적용됩니다.&#x27; : &#x27;가입한 이메일과 비밀번호로 로그인하세요.&#x27;}&lt;/p&gt;
+        {message &amp;&amp; &lt;p className=&quot;error&quot; role=&quot;alert&quot;&gt;{message}&lt;/p&gt;}
+        &lt;button className=&quot;primary wide&quot; disabled={busy}&gt;{busy ? &#x27;처리 중…&#x27; : isSignup ? &#x27;계정 만들기&#x27; : &#x27;로그인&#x27;}&lt;/button&gt;
+      &lt;/form&gt;
+      &lt;button className=&quot;quiet mode&quot; disabled={busy} onClick={changeMode}&gt;
+        {isSignup ? &#x27;계정이 있나요? 로그인&#x27; : &#x27;처음인가요? 회원가입&#x27;}
+      &lt;/button&gt;
+    &lt;/section&gt;
+  )
+}
+</pre></details><h2 id="code12"><a data-slide="74">A12 · await 이후는 성공과 실패로 갈립니다</a></h2><h3>정의</h3><p>Promise는 비동기 작업의 성공 또는 실패 결과를 나중에 전달하는 객체입니다.</p><h4>요청 중</h4><p>await action(...)에서 이 함수의 다음 처리를 기다림</p><h4>성공</h4><p>setPassword(&#x27;&#x27;) 실행 → finally에서 잠금 해제</p><h4>실패</h4><p>catch에서 오류 표시 → finally에서 잠금 해제</p><h3>직접 따라가기</h3><p>비밀번호가 틀려 Promise가 거부되었다고 가정하세요. setPassword는 실행되지 않고 setMessage가 오류 문구를 저장합니다. 그 뒤 finally가 실행되어 다시 시도할 수 있습니다. await는 브라우저 전체를 멈추지 않습니다.</p><p>실패하면 try의 남은 줄을 건너뜁니다. finally는 양쪽 모두 실행합니다.</p><h2 id="code13"><a data-slide="75">A13 · 연속 클릭을 막는 ref와 busy</a></h2><h3>개념 정의</h3><p>ref는 렌더 사이에 값을 보관하며, 바꿔도 자체적으로 재렌더하지 않습니다.</p><h3>실행 예시</h3><p>빠른 두 번 클릭 → 진행 중인 요청 동안 추가 호출 차단</p><h3>코드를 읽는 순서</h3><h4>pending.current</h4><p>요청 중이면 즉시 false를 반환</p><h4>busy state</h4><p>화면의 버튼을 비활성화</p><h4>finally</h4><p>성공·실패 모두 잠금을 해제</p><h3>조금 더 자세히</h3><p>busy는 UI를 바꾸는 값이고 pending.current는 함수가 바로 확인하는 잠금입니다. run은 action 함수를 받아 실행하고 성공이면 true, 실패면 false를 반환합니다. 네트워크 재시도까지 포함한 서버 수준의 중복 방지 장치는 아닙니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>action은 실행할 작업</h4><p>run(() =&gt; addDoc(...))에서 run은 요청을 실행할 함수를 인자로 받습니다. 공통 처리인 중복 클릭 방지, 오류 표시, 잠금 해제를 run에 모으고 실제 생성·수정·삭제 내용만 action으로 바꿉니다.</p><h4>ref와 state가 함께 필요한 이유</h4><p>pending.current = true는 같은 실행 흐름에서 즉시 읽을 수 있는 잠금입니다. setBusy(true)는 다음 렌더에서 disabled={busy}에 반영되어 버튼을 잠급니다. ref만 바꾸면 화면이 갱신되지 않고, state만으로는 렌더 전에 들어온 호출을 즉시 막기 어렵습니다.</p><h4>return 뒤에도 finally 실행</h4><p>try에서 true 또는 catch에서 false를 반환하려 해도 finally를 먼저 실행합니다. 따라서 성공과 실패 모두 pending과 busy를 해제합니다. finally를 빠뜨려 잠금이 남으면 이후 요청을 계속 차단할 수 있습니다.</p><details><summary>src/useTodos.js 전체 코드</summary><pre>import { useEffect, useRef, useState } from &#x27;react&#x27;
+import { addDoc, collection, deleteDoc, doc, limit, onSnapshot,
+  orderBy, query, serverTimestamp, updateDoc } from &#x27;firebase/firestore&#x27;
+import { db } from &#x27;./firebase&#x27;
+import { errorMessage } from &#x27;./errors&#x27;
+
+export function useTodos(uid) {
+  const [todos, setTodos] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [busy, setBusy] = useState(false)
+  const [message, setMessage] = useState(&#x27;&#x27;)
+  const pending = useRef(false)
+
+  // [DB 1] UID가 바뀌면 이전 관찰을 끝내고 새 계정의 목록을 관찰합니다.
+  useEffect(() =&gt; {
+    setTodos([])
+    setLoading(true)
+    setMessage(&#x27;&#x27;)
+    const todoCollection = collection(db, &#x27;users&#x27;, uid, &#x27;todos&#x27;)
+    const todoQuery = query(todoCollection, orderBy(&#x27;createdAt&#x27;, &#x27;desc&#x27;), limit(50))
+    const unsubscribe = onSnapshot(todoQuery, snapshot =&gt; {
+      setTodos(snapshot.docs.map(item =&gt; ({ ...item.data(), id: item.id })))
+      setLoading(false)
+    }, error =&gt; {
+      setMessage(errorMessage(error))
+      setLoading(false)
+    })
+    return unsubscribe // [DB 2] 로그아웃으로 화면이 사라질 때도 관찰을 끝냅니다.
+  }, [uid])
+
+  function todoCollection() {
+    return collection(db, &#x27;users&#x27;, uid, &#x27;todos&#x27;)
+  }
+
+  // [DB 3] 중복 요청 방지, 오류 표시와 성공 여부 반환을 한곳에서 처리합니다.
+  async function run(action) {
+    if (pending.current) return false
+    pending.current = true
+    setBusy(true)
+    setMessage(&#x27;&#x27;)
+    try { await action(); return true }
+    catch (error) { setMessage(errorMessage(error)); return false }
+    finally { pending.current = false; setBusy(false) }
+  }
+
+  function cleanTitle(value) {
+    const title = value.trim()
+    if (!title || title.length &gt; 80) {
+      setMessage(&#x27;할 일은 공백을 제외해 1~80자로 입력하세요.&#x27;)
+      return null
+    }
+    return title
+  }
+
+  function addTodo(value) {
+    const title = cleanTitle(value)
+    if (!title) return Promise.resolve(false)
+    // [DB 4] ID는 자동 생성하고 생성 시각은 서버가 정합니다.
+    return run(() =&gt; addDoc(todoCollection(), {
+      title, done: false, createdAt: serverTimestamp(),
+    }))
+  }
+  function toggleTodo(todo) {
+    return run(() =&gt; updateDoc(doc(todoCollection(), todo.id), { done: !todo.done }))
+  }
+  function renameTodo(todo, value) {
+    const title = cleanTitle(value)
+    if (!title) return Promise.resolve(false)
+    return run(() =&gt; updateDoc(doc(todoCollection(), todo.id), { title }))
+  }
+  function removeTodo(todo) {
+    return run(() =&gt; deleteDoc(doc(todoCollection(), todo.id)))
+  }
+  return { todos, loading, busy, message, addTodo, toggleTodo, renameTodo, removeTodo }
+}
+</pre></details><h2 id="code14"><a data-slide="76">A14 · 함수 전달과 함수 호출을 구분하기</a></h2><h3>정의</h3><p>함수 이름이나 화살표 함수를 넘기면 받는 쪽에서 실행 시점을 정할 수 있습니다.</p><h4>() =&gt; addDoc(...)</h4><p>지금은 실행할 작업을 함수로 전달</p><h4>await action()</h4><p>run의 잠금 설정 후 실제 작업 호출</p><h4>true / false</h4><p>작업 성공 여부를 호출한 화면에 전달</p><h3>직접 따라가기</h3><p>run(addDoc(...))로 바꾸면 addDoc이 먼저 실행되고 그 결과인 Promise가 run에 전달됩니다. 이 run은 action()으로 함수를 호출하므로 Promise를 전달하면 오류가 납니다. 함수와 실행 결과를 구분하세요.</p><p>run이 준비를 마친 뒤 실행하도록 함수로 감쌉니다.</p><h3>코드</h3><pre>// 아래 두 줄은 서로 다른 위치의 핵심 표현입니다.
+run(() =&gt; addDoc(todoCollection(), {
+  title, done: false, createdAt: serverTimestamp(),
+}))
+
+// run 내부에서 전달받은 함수를 실행
+await action()</pre><h2 id="code15"><a data-slide="77">A15 · 저장 성공 때만 입력을 비우기</a></h2><h3>개념 정의</h3><p>반환값은 호출한 함수에게 작업 결과를 전달하는 값입니다.</p><h3>실행 예시</h3><p>저장 거부 → 오류 확인 → 제목을 잃지 않고 다시 시도</p><h3>코드를 읽는 순서</h3><h4>제출</h4><p>새로고침을 막고 현재 title을 전달</p><h4>성공</h4><p>addTodo가 true → setTitle(&#x27;&#x27;)</p><h4>실패</h4><p>false → 입력한 문장을 유지</p><h3>조금 더 자세히</h3><p>addTodo는 입력 검사와 DB 요청 결과를 Promise&lt;boolean&gt; 형태로 돌려줍니다. await가 결과를 기다린 다음 if가 판단합니다. 실패 여부와 무관하게 무조건 입력을 지우면 사용자가 다시 작성해야 합니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>event.preventDefault()</h4><p>form의 기본 제출 동작으로 페이지가 새로고침되는 것을 막습니다. 앱이 JavaScript로 저장 요청과 결과 표시를 맡기 때문입니다. Enter 입력으로 제출해도 동일한 onSubmit 핸들러를 사용합니다.</p><h4>if (await addTodo(title))</h4><p>addTodo(title)이 돌려준 Promise에서 최종 true/false를 얻은 다음 if가 검사합니다. await를 빼면 Promise 객체 자체를 검사하게 되고, 객체는 참으로 평가되므로 저장 결과와 상관없이 입력을 지울 수 있습니다.</p><h4>실패해도 재입력하지 않도록</h4><p>입력 검사 실패 또는 DB 요청 실패는 false입니다. 이때 setTitle을 실행하지 않아 작성한 내용이 남습니다. 반대로 true인 경우에만 빈 문자열을 상태로 설정해 제어 입력창을 비웁니다.</p><details><summary>src/components/TodoPanel.jsx 전체 코드</summary><pre>import { useState } from &#x27;react&#x27;
+import { useTodos } from &#x27;../useTodos&#x27;
+
+export default function TodoPanel({ uid }) {
+  const { todos, loading, busy, message, addTodo, toggleTodo, renameTodo, removeTodo } = useTodos(uid)
+  const [title, setTitle] = useState(&#x27;&#x27;)
+  const [editingId, setEditingId] = useState(null)
+  const [editedTitle, setEditedTitle] = useState(&#x27;&#x27;)
+  // 렌더링할 때 배열에서 계산합니다. 별도 Effect나 상태가 필요하지 않습니다.
+  const completed = todos.filter(todo =&gt; todo.done).length
+
+  async function add(event) {
+    event.preventDefault()
+    if (await addTodo(title)) setTitle(&#x27;&#x27;) // 저장 실패 시 입력은 유지합니다.
+  }
+  function startEdit(todo) {
+    setEditingId(todo.id)
+    setEditedTitle(todo.title)
+  }
+  async function saveEdit(event, todo) {
+    event.preventDefault()
+    if (await renameTodo(todo, editedTitle)) setEditingId(null)
+  }
+  async function remove(todo) {
+    if (window.confirm(`“${todo.title}”을 삭제할까요?`)) await removeTodo(todo)
+  }
+
+  return (
+    &lt;section className=&quot;panel&quot;&gt;
+      &lt;div className=&quot;section-heading&quot;&gt;&lt;h2&gt;나의 목록&lt;/h2&gt;&lt;span&gt;표시 중 {todos.length}개 / 완료 {completed}개&lt;/span&gt;&lt;/div&gt;
+      &lt;form className=&quot;add-form&quot; onSubmit={add}&gt;
+        &lt;label className=&quot;sr-only&quot; htmlFor=&quot;new-todo&quot;&gt;새 할 일&lt;/label&gt;
+        &lt;input id=&quot;new-todo&quot; value={title} onChange={event =&gt; setTitle(event.target.value)}
+          placeholder=&quot;오늘 할 일을 적어 보세요&quot; maxLength={80} required disabled={busy} /&gt;
+        &lt;button className=&quot;primary&quot; disabled={busy || !title.trim()}&gt;추가&lt;/button&gt;
+      &lt;/form&gt;
+      {message &amp;&amp; &lt;p className=&quot;error&quot; role=&quot;alert&quot;&gt;{message}&lt;/p&gt;}
+      {loading ? &lt;p role=&quot;status&quot; className=&quot;empty&quot;&gt;목록을 불러오고 있습니다…&lt;/p&gt;
+        : !todos.length &amp;&amp; &lt;p className=&quot;empty&quot;&gt;첫 번째 할 일을 추가해 보세요.&lt;/p&gt;}
+      &lt;ul className=&quot;todo-list&quot;&gt;
+        {todos.map(todo =&gt; (
+          &lt;li key={todo.id}&gt;
+            {editingId === todo.id ? (
+              &lt;form className=&quot;edit-form&quot; onSubmit={event =&gt; saveEdit(event, todo)}&gt;
+                &lt;input value={editedTitle} onChange={event =&gt; setEditedTitle(event.target.value)}
+                  aria-label=&quot;할 일 수정&quot; maxLength={80} required disabled={busy} /&gt;
+                &lt;button className=&quot;primary&quot; disabled={busy}&gt;저장&lt;/button&gt;
+                &lt;button type=&quot;button&quot; className=&quot;quiet&quot; disabled={busy} onClick={() =&gt; setEditingId(null)}&gt;취소&lt;/button&gt;
+              &lt;/form&gt;
+            ) : (
+              &lt;&gt;
+                &lt;label className={`todo-title${todo.done ? &#x27; completed&#x27; : &#x27;&#x27;}`}&gt;
+                  &lt;input type=&quot;checkbox&quot; checked={todo.done} disabled={busy} onChange={() =&gt; toggleTodo(todo)} /&gt;
+                  &lt;span&gt;{todo.title}&lt;/span&gt;
+                &lt;/label&gt;
+                &lt;button className=&quot;quiet&quot; disabled={busy} onClick={() =&gt; startEdit(todo)} aria-label={`${todo.title} 수정`}&gt;수정&lt;/button&gt;
+                &lt;button className=&quot;quiet danger&quot; disabled={busy} onClick={() =&gt; remove(todo)} aria-label={`${todo.title} 삭제`}&gt;삭제&lt;/button&gt;
+              &lt;/&gt;
+            )}
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+      &lt;p className=&quot;hint&quot;&gt;최근 생성한 50개까지 표시합니다. 변경 사항은 Firebase에 저장됩니다.&lt;/p&gt;
+    &lt;/section&gt;
+  )
+}
+</pre></details><h2 id="code16"><a data-slide="78">A16 · await를 빼면 왜 입력이 지워질까</a></h2><h3>정의</h3><p>if는 조건을 참 또는 거짓으로 평가합니다. Promise 객체 자체는 참으로 평가됩니다.</p><h4>await 있음 · 성공</h4><p>true를 받아 조건 통과 → 입력 비움</p><h4>await 있음 · 실패</h4><p>false를 받아 조건 불통과 → 입력 유지</p><h4>await 없음</h4><p>Promise 객체를 검사 → 결과 전에 입력 비움</p><h3>직접 따라가기</h3><p>addTodo가 Promise.resolve(false)를 반환하는 빈 제목 사례를 생각해 보세요. await를 쓰면 false가 됩니다. await 없이 Promise를 if에 넣으면 객체 자체는 참이므로 실패여도 setTitle이 실행됩니다. 이 코드는 결과값을 기다려야 하는 이유를 보여 줍니다.</p><p>if (await addTodo(title))는 저장 결과를 보고 판단합니다.</p><h2 id="code17"><a data-slide="79">A17 · UID로 개인 컬렉션 경로 만들기</a></h2><h3>개념 정의</h3><p>컬렉션은 문서의 모음이고, 쿼리는 가져올 문서의 조건입니다.</p><h3>실행 예시</h3><p>uid가 ABC이면 경로는 users/ABC/todos</p><h3>코드를 읽는 순서</h3><h4>collection</h4><p>users / uid / todos 경로를 가리킵니다.</p><h4>orderBy</h4><p>createdAt의 내림차순으로 정렬</p><h4>limit</h4><p>최근 생성한 50개까지만 가져옵니다.</p><h3>조금 더 자세히</h3><p>collection() 호출 자체는 서버에 문서를 생성하지 않습니다. 문서를 추가할 때 실제 데이터가 생깁니다. orderBy(createdAt)는 해당 필드가 있는 문서를 대상으로 하므로 모든 할 일에 생성 시각을 저장합니다. 목록에 없는 오래된 문서가 삭제된 것은 아닙니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>경로를 조각으로 읽기</h4><p>collection(db, &quot;users&quot;, uid, &quot;todos&quot;)에서 db는 연결 객체입니다. 뒤의 세 인자를 이어 users/ABC/todos처럼 읽습니다. users는 컬렉션, ABC는 사용자 문서 경로, todos는 그 아래 하위 컬렉션입니다.</p><h4>참조와 조회 조건</h4><p>collection은 저장 위치를 가리키는 참조를 만듭니다. query는 참조에 정렬·개수 조건을 붙입니다. 이 두 줄만으로 목록을 화면에 가져오지는 않습니다. 다음 onSnapshot이 결과를 관찰합니다.</p><h4>정렬과 제한의 영향</h4><p>createdAt이 늦은 문서를 먼저 놓고 그중 50개를 조회합니다. createdAt 필드가 없는 문서는 이 정렬 쿼리의 결과에 포함되지 않습니다. 51번째 문서는 목록에서 빠질 수 있지만 서버에서 삭제된 것은 아닙니다.</p><details><summary>src/useTodos.js 전체 코드</summary><pre>import { useEffect, useRef, useState } from &#x27;react&#x27;
+import { addDoc, collection, deleteDoc, doc, limit, onSnapshot,
+  orderBy, query, serverTimestamp, updateDoc } from &#x27;firebase/firestore&#x27;
+import { db } from &#x27;./firebase&#x27;
+import { errorMessage } from &#x27;./errors&#x27;
+
+export function useTodos(uid) {
+  const [todos, setTodos] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [busy, setBusy] = useState(false)
+  const [message, setMessage] = useState(&#x27;&#x27;)
+  const pending = useRef(false)
+
+  // [DB 1] UID가 바뀌면 이전 관찰을 끝내고 새 계정의 목록을 관찰합니다.
+  useEffect(() =&gt; {
+    setTodos([])
+    setLoading(true)
+    setMessage(&#x27;&#x27;)
+    const todoCollection = collection(db, &#x27;users&#x27;, uid, &#x27;todos&#x27;)
+    const todoQuery = query(todoCollection, orderBy(&#x27;createdAt&#x27;, &#x27;desc&#x27;), limit(50))
+    const unsubscribe = onSnapshot(todoQuery, snapshot =&gt; {
+      setTodos(snapshot.docs.map(item =&gt; ({ ...item.data(), id: item.id })))
+      setLoading(false)
+    }, error =&gt; {
+      setMessage(errorMessage(error))
+      setLoading(false)
+    })
+    return unsubscribe // [DB 2] 로그아웃으로 화면이 사라질 때도 관찰을 끝냅니다.
+  }, [uid])
+
+  function todoCollection() {
+    return collection(db, &#x27;users&#x27;, uid, &#x27;todos&#x27;)
+  }
+
+  // [DB 3] 중복 요청 방지, 오류 표시와 성공 여부 반환을 한곳에서 처리합니다.
+  async function run(action) {
+    if (pending.current) return false
+    pending.current = true
+    setBusy(true)
+    setMessage(&#x27;&#x27;)
+    try { await action(); return true }
+    catch (error) { setMessage(errorMessage(error)); return false }
+    finally { pending.current = false; setBusy(false) }
+  }
+
+  function cleanTitle(value) {
+    const title = value.trim()
+    if (!title || title.length &gt; 80) {
+      setMessage(&#x27;할 일은 공백을 제외해 1~80자로 입력하세요.&#x27;)
+      return null
+    }
+    return title
+  }
+
+  function addTodo(value) {
+    const title = cleanTitle(value)
+    if (!title) return Promise.resolve(false)
+    // [DB 4] ID는 자동 생성하고 생성 시각은 서버가 정합니다.
+    return run(() =&gt; addDoc(todoCollection(), {
+      title, done: false, createdAt: serverTimestamp(),
+    }))
+  }
+  function toggleTodo(todo) {
+    return run(() =&gt; updateDoc(doc(todoCollection(), todo.id), { done: !todo.done }))
+  }
+  function renameTodo(todo, value) {
+    const title = cleanTitle(value)
+    if (!title) return Promise.resolve(false)
+    return run(() =&gt; updateDoc(doc(todoCollection(), todo.id), { title }))
+  }
+  function removeTodo(todo) {
+    return run(() =&gt; deleteDoc(doc(todoCollection(), todo.id)))
+  }
+  return { todos, loading, busy, message, addTodo, toggleTodo, renameTodo, removeTodo }
+}
+</pre></details><h2 id="code18"><a data-slide="80">A18 · 컬렉션과 문서를 주소로 구분</a></h2><h3>정의</h3><p>문서 하나의 주소는 컬렉션 경로 뒤에 문서 ID가 붙습니다.</p><h4>users / ABC / todos</h4><p>ABC 계정의 할 일 컬렉션</p><h4>users / ABC / todos / t1</h4><p>그 안의 ID가 t1인 문서 하나</p><h4>users / XYZ / todos / t1</h4><p>다른 계정 경로에 있는 별개의 문서</p><h3>직접 따라가기</h3><p>같은 t1이라는 문서 ID라도 전체 경로가 다르면 다른 문서입니다. 컬렉션 참조를 만든 뒤 addDoc으로 새 문서를 생성하고, 수정·삭제에는 doc으로 정확한 문서 주소를 전달합니다. 보안 검사는 Rules가 별도로 수행합니다.</p><p>collection은 모음의 주소 · doc은 문서 하나의 주소</p><h2 id="code19"><a data-slide="81">A19 · onSnapshot으로 목록을 갱신</a></h2><h3>개념 정의</h3><p>스냅샷은 특정 시점에 관찰한 쿼리 결과입니다.</p><h3>실행 예시</h3><p>다른 창에서 title 변경 → 새 스냅샷 → 목록 갱신</p><h3>코드를 읽는 순서</h3><h4>관찰</h4><p>초기 결과와 이후 변경을 받습니다.</p><h4>변환</h4><p>문서 데이터를 배열로 만들고 id를 붙입니다.</p><h4>화면</h4><p>setTodos가 새 목록을 렌더링합니다.</p><h3>조금 더 자세히</h3><p>item.data()는 문서 필드 객체, item.id는 문서 ID입니다. 펼침 문법 ...으로 필드를 옮긴 다음 id를 추가합니다. Effect의 [uid]가 바뀌면 이전 관찰을 정리하고 새 경로를 관찰합니다. 로그아웃으로 컴포넌트가 사라질 때도 정리합니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>snapshot.docs → 배열 변환</h4><p>snapshot.docs는 조회된 문서 스냅샷들의 배열입니다. map이 각 문서를 순회하고 item.data()로 필드 객체를 읽습니다. item.id는 필드가 아니라 문서의 식별자이므로 따로 붙입니다.</p><h4>({ ...item.data(), id: item.id })</h4><p>...은 읽어 온 필드를 새 객체에 펼칩니다. 뒤에 id 속성을 추가해 수정·삭제 대상에 사용할 수 있게 합니다. 화살표 함수 바로 뒤의 ({ ... })는 객체를 반환한다는 뜻입니다. 괄호 없이 { ... }만 쓰면 함수 본문과 혼동할 수 있습니다.</p><h4>저장 요청과 관찰 결과는 별개</h4><p>addDoc은 쓰기 결과를 알려 주고 onSnapshot은 현재 목록을 알려 줍니다. 관찰은 로컬 변경을 서버 확정 전에 알릴 수도 있으므로 항상 저장 성공 다음에만 콜백이 온다고 가정하지 마세요. Effect의 [uid]가 바뀌면 이전 관찰을 해제한 뒤 새 계정 경로를 관찰합니다.</p><details><summary>src/useTodos.js 전체 코드</summary><pre>import { useEffect, useRef, useState } from &#x27;react&#x27;
+import { addDoc, collection, deleteDoc, doc, limit, onSnapshot,
+  orderBy, query, serverTimestamp, updateDoc } from &#x27;firebase/firestore&#x27;
+import { db } from &#x27;./firebase&#x27;
+import { errorMessage } from &#x27;./errors&#x27;
+
+export function useTodos(uid) {
+  const [todos, setTodos] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [busy, setBusy] = useState(false)
+  const [message, setMessage] = useState(&#x27;&#x27;)
+  const pending = useRef(false)
+
+  // [DB 1] UID가 바뀌면 이전 관찰을 끝내고 새 계정의 목록을 관찰합니다.
+  useEffect(() =&gt; {
+    setTodos([])
+    setLoading(true)
+    setMessage(&#x27;&#x27;)
+    const todoCollection = collection(db, &#x27;users&#x27;, uid, &#x27;todos&#x27;)
+    const todoQuery = query(todoCollection, orderBy(&#x27;createdAt&#x27;, &#x27;desc&#x27;), limit(50))
+    const unsubscribe = onSnapshot(todoQuery, snapshot =&gt; {
+      setTodos(snapshot.docs.map(item =&gt; ({ ...item.data(), id: item.id })))
+      setLoading(false)
+    }, error =&gt; {
+      setMessage(errorMessage(error))
+      setLoading(false)
+    })
+    return unsubscribe // [DB 2] 로그아웃으로 화면이 사라질 때도 관찰을 끝냅니다.
+  }, [uid])
+
+  function todoCollection() {
+    return collection(db, &#x27;users&#x27;, uid, &#x27;todos&#x27;)
+  }
+
+  // [DB 3] 중복 요청 방지, 오류 표시와 성공 여부 반환을 한곳에서 처리합니다.
+  async function run(action) {
+    if (pending.current) return false
+    pending.current = true
+    setBusy(true)
+    setMessage(&#x27;&#x27;)
+    try { await action(); return true }
+    catch (error) { setMessage(errorMessage(error)); return false }
+    finally { pending.current = false; setBusy(false) }
+  }
+
+  function cleanTitle(value) {
+    const title = value.trim()
+    if (!title || title.length &gt; 80) {
+      setMessage(&#x27;할 일은 공백을 제외해 1~80자로 입력하세요.&#x27;)
+      return null
+    }
+    return title
+  }
+
+  function addTodo(value) {
+    const title = cleanTitle(value)
+    if (!title) return Promise.resolve(false)
+    // [DB 4] ID는 자동 생성하고 생성 시각은 서버가 정합니다.
+    return run(() =&gt; addDoc(todoCollection(), {
+      title, done: false, createdAt: serverTimestamp(),
+    }))
+  }
+  function toggleTodo(todo) {
+    return run(() =&gt; updateDoc(doc(todoCollection(), todo.id), { done: !todo.done }))
+  }
+  function renameTodo(todo, value) {
+    const title = cleanTitle(value)
+    if (!title) return Promise.resolve(false)
+    return run(() =&gt; updateDoc(doc(todoCollection(), todo.id), { title }))
+  }
+  function removeTodo(todo) {
+    return run(() =&gt; deleteDoc(doc(todoCollection(), todo.id)))
+  }
+  return { todos, loading, busy, message, addTodo, toggleTodo, renameTodo, removeTodo }
+}
+</pre></details><p>공식 문서: <a href="https://firebase.google.com/docs/firestore/query-data/listen" target="_blank" rel="noopener">https://firebase.google.com/docs/firestore/query-data/listen</a></p><h2 id="code20"><a data-slide="82">A20 · 문서가 화면용 객체로 바뀌는 과정</a></h2><h3>정의</h3><p>문서 ID와 문서의 필드는 따로 읽은 뒤 화면에서 쓸 객체로 합칩니다.</p><h4>item.data()</h4><p>{ title: &quot;과제&quot;, done: false, createdAt: … }</p><h4>item.id</h4><p>&quot;t1&quot;</p><h4>...필드 + id</h4><p>{ title: &quot;과제&quot;, done: false, createdAt: …, id: &quot;t1&quot; }</p><h3>직접 따라가기</h3><p>...은 원본 필드를 새 객체에 펼칩니다. id를 마지막에 적어 문서의 실제 ID를 넣습니다. snapshot.docs가 비어 있으면 map 결과는 []이므로 목록도 빈 배열로 갱신됩니다. 단순히 제목 문자열만 저장하면 어느 문서를 수정할지 식별하기 어렵습니다.</p><p>setTodos([객체1, 객체2, …]) → todo.id로 수정·삭제 대상 지정</p><h2 id="code21"><a data-slide="83">A21 · addDoc으로 할 일 생성</a></h2><h3>개념 정의</h3><p>문서는 ID와 필드를 가진 한 개의 저장 단위입니다.</p><h3>실행 예시</h3><p>&quot;  과제 제출  &quot; → title=&quot;과제 제출&quot;, done=false</p><h3>코드를 읽는 순서</h3><h4>cleanTitle</h4><p>앞뒤 공백 제거 · 1~80자 검사</p><h4>addDoc</h4><p>컬렉션에 자동 ID 문서를 추가</p><h4>serverTimestamp</h4><p>생성 시각을 서버 기준으로 기록</p><h3>조금 더 자세히</h3><p>클라이언트의 cleanTitle 검사는 입력 안내용입니다. 같은 제약을 서버 Rules에서도 검사해야 합니다. serverTimestamp()는 현재 시각 문자열이 아니라 서버가 저장 시각으로 채우도록 요청하는 값입니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>cleanTitle(value)의 반환값</h4><p>앞뒤 공백을 제거한 제목 문자열 또는 null을 반환합니다. !title이면 Promise.resolve(false)를 돌려 DB 요청을 하지 않습니다. 이렇게 하면 호출하는 화면은 검사 실패와 요청 실패 모두 await 결과 false로 다룰 수 있습니다.</p><h4>title이라는 짧은 속성 표기</h4><p>{ title }은 { title: title }과 같습니다. 저장 필드 이름도 title이고 값으로 사용할 변수 이름도 title이어서 줄여 쓸 수 있습니다. done: false는 첫 생성 때 미완료로 저장합니다.</p><h4>serverTimestamp와 생성 시각</h4><p>serverTimestamp()는 서버가 시각을 채우도록 지시하는 값입니다. 사용자의 PC 시계를 읽은 문자열이 아닙니다. create Rules는 이 시각이 request.time과 같고 done이 false인지 검사합니다.</p><details><summary>src/useTodos.js 전체 코드</summary><pre>import { useEffect, useRef, useState } from &#x27;react&#x27;
+import { addDoc, collection, deleteDoc, doc, limit, onSnapshot,
+  orderBy, query, serverTimestamp, updateDoc } from &#x27;firebase/firestore&#x27;
+import { db } from &#x27;./firebase&#x27;
+import { errorMessage } from &#x27;./errors&#x27;
+
+export function useTodos(uid) {
+  const [todos, setTodos] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [busy, setBusy] = useState(false)
+  const [message, setMessage] = useState(&#x27;&#x27;)
+  const pending = useRef(false)
+
+  // [DB 1] UID가 바뀌면 이전 관찰을 끝내고 새 계정의 목록을 관찰합니다.
+  useEffect(() =&gt; {
+    setTodos([])
+    setLoading(true)
+    setMessage(&#x27;&#x27;)
+    const todoCollection = collection(db, &#x27;users&#x27;, uid, &#x27;todos&#x27;)
+    const todoQuery = query(todoCollection, orderBy(&#x27;createdAt&#x27;, &#x27;desc&#x27;), limit(50))
+    const unsubscribe = onSnapshot(todoQuery, snapshot =&gt; {
+      setTodos(snapshot.docs.map(item =&gt; ({ ...item.data(), id: item.id })))
+      setLoading(false)
+    }, error =&gt; {
+      setMessage(errorMessage(error))
+      setLoading(false)
+    })
+    return unsubscribe // [DB 2] 로그아웃으로 화면이 사라질 때도 관찰을 끝냅니다.
+  }, [uid])
+
+  function todoCollection() {
+    return collection(db, &#x27;users&#x27;, uid, &#x27;todos&#x27;)
+  }
+
+  // [DB 3] 중복 요청 방지, 오류 표시와 성공 여부 반환을 한곳에서 처리합니다.
+  async function run(action) {
+    if (pending.current) return false
+    pending.current = true
+    setBusy(true)
+    setMessage(&#x27;&#x27;)
+    try { await action(); return true }
+    catch (error) { setMessage(errorMessage(error)); return false }
+    finally { pending.current = false; setBusy(false) }
+  }
+
+  function cleanTitle(value) {
+    const title = value.trim()
+    if (!title || title.length &gt; 80) {
+      setMessage(&#x27;할 일은 공백을 제외해 1~80자로 입력하세요.&#x27;)
+      return null
+    }
+    return title
+  }
+
+  function addTodo(value) {
+    const title = cleanTitle(value)
+    if (!title) return Promise.resolve(false)
+    // [DB 4] ID는 자동 생성하고 생성 시각은 서버가 정합니다.
+    return run(() =&gt; addDoc(todoCollection(), {
+      title, done: false, createdAt: serverTimestamp(),
+    }))
+  }
+  function toggleTodo(todo) {
+    return run(() =&gt; updateDoc(doc(todoCollection(), todo.id), { done: !todo.done }))
+  }
+  function renameTodo(todo, value) {
+    const title = cleanTitle(value)
+    if (!title) return Promise.resolve(false)
+    return run(() =&gt; updateDoc(doc(todoCollection(), todo.id), { title }))
+  }
+  function removeTodo(todo) {
+    return run(() =&gt; deleteDoc(doc(todoCollection(), todo.id)))
+  }
+  return { todos, loading, busy, message, addTodo, toggleTodo, renameTodo, removeTodo }
+}
+</pre></details><h2 id="code22"><a data-slide="84">A22 · cleanTitle을 세 입력으로 실행하기</a></h2><h3>정의</h3><p>trim은 앞뒤 공백을 제거합니다. 글자 사이의 공백은 유지합니다.</p><h4>&quot;  과제 제출  &quot;</h4><p>&quot;과제 제출&quot; 반환 → DB 요청 진행</p><h4>&quot;   &quot;</h4><p>&quot;&quot; → 오류 문구 설정 → null 반환</p><h4>정리 후 81자</h4><p>길이 초과 → null → 요청하지 않음</p><h3>직접 따라가기</h3><p>cleanTitle의 !title은 빈 문자열을 잡습니다. title.length &gt; 80은 trim 후 JavaScript 문자열 길이를 검사합니다. 글자 사이의 공백은 length에 포함되며 이모지의 보이는 개수와 length가 항상 같지는 않습니다. 프런트 검사를 우회할 수 있으므로 서버 Rules도 필요합니다.</p><p>null → addTodo가 false 결과 반환 → 화면의 입력 유지</p><h2 id="code23"><a data-slide="85">A23 · updateDoc과 deleteDoc의 차이</a></h2><h3>개념 정의</h3><p>문서 참조는 컬렉션 경로와 문서 ID로 대상을 지정합니다.</p><h3>실행 예시</h3><p>done=false → 체크 → done=true · 삭제는 문서 제거</p><h3>코드를 읽는 순서</h3><h4>doc</h4><p>todo.id인 문서 하나를 지정</p><h4>updateDoc</h4><p>done 필드만 반대 값으로 변경</p><h4>deleteDoc</h4><p>지정한 문서 전체를 삭제</p><h3>조금 더 자세히</h3><p>updateDoc은 제공한 필드만 바꿉니다. renameTodo도 같은 문서의 title만 수정합니다. 문서가 없다면 updateDoc은 실패합니다. 화면에서는 확인 창을 거친 뒤 removeTodo를 호출합니다. 실제 삭제는 되돌리기 코드가 별도로 구현되어 있지 않습니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>doc(todoCollection(), todo.id)</h4><p>컬렉션 참조에 문서 ID를 덧붙여 users/ABC/todos/t1 같은 하나의 대상을 만듭니다. 제목은 중복될 수 있으므로 제목 대신 문서 ID로 대상을 지정합니다.</p><h4>!todo.done과 일부 필드 수정</h4><p>!는 불리언 값을 반대로 바꿉니다. false이면 true, true이면 false입니다. updateDoc의 { done: ... }은 done만 변경하므로 title과 createdAt은 유지합니다. 없는 문서에 대한 updateDoc 요청은 실패합니다.</p><h4>삭제의 범위</h4><p>deleteDoc은 선택한 할 일 문서를 삭제합니다. 이 샘플의 remove는 먼저 confirm으로 확인하고 요청합니다. 편집 화면의 취소는 입력 상태만 닫는 동작이므로 DB 삭제와 다릅니다.</p><details><summary>src/useTodos.js 전체 코드</summary><pre>import { useEffect, useRef, useState } from &#x27;react&#x27;
+import { addDoc, collection, deleteDoc, doc, limit, onSnapshot,
+  orderBy, query, serverTimestamp, updateDoc } from &#x27;firebase/firestore&#x27;
+import { db } from &#x27;./firebase&#x27;
+import { errorMessage } from &#x27;./errors&#x27;
+
+export function useTodos(uid) {
+  const [todos, setTodos] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [busy, setBusy] = useState(false)
+  const [message, setMessage] = useState(&#x27;&#x27;)
+  const pending = useRef(false)
+
+  // [DB 1] UID가 바뀌면 이전 관찰을 끝내고 새 계정의 목록을 관찰합니다.
+  useEffect(() =&gt; {
+    setTodos([])
+    setLoading(true)
+    setMessage(&#x27;&#x27;)
+    const todoCollection = collection(db, &#x27;users&#x27;, uid, &#x27;todos&#x27;)
+    const todoQuery = query(todoCollection, orderBy(&#x27;createdAt&#x27;, &#x27;desc&#x27;), limit(50))
+    const unsubscribe = onSnapshot(todoQuery, snapshot =&gt; {
+      setTodos(snapshot.docs.map(item =&gt; ({ ...item.data(), id: item.id })))
+      setLoading(false)
+    }, error =&gt; {
+      setMessage(errorMessage(error))
+      setLoading(false)
+    })
+    return unsubscribe // [DB 2] 로그아웃으로 화면이 사라질 때도 관찰을 끝냅니다.
+  }, [uid])
+
+  function todoCollection() {
+    return collection(db, &#x27;users&#x27;, uid, &#x27;todos&#x27;)
+  }
+
+  // [DB 3] 중복 요청 방지, 오류 표시와 성공 여부 반환을 한곳에서 처리합니다.
+  async function run(action) {
+    if (pending.current) return false
+    pending.current = true
+    setBusy(true)
+    setMessage(&#x27;&#x27;)
+    try { await action(); return true }
+    catch (error) { setMessage(errorMessage(error)); return false }
+    finally { pending.current = false; setBusy(false) }
+  }
+
+  function cleanTitle(value) {
+    const title = value.trim()
+    if (!title || title.length &gt; 80) {
+      setMessage(&#x27;할 일은 공백을 제외해 1~80자로 입력하세요.&#x27;)
+      return null
+    }
+    return title
+  }
+
+  function addTodo(value) {
+    const title = cleanTitle(value)
+    if (!title) return Promise.resolve(false)
+    // [DB 4] ID는 자동 생성하고 생성 시각은 서버가 정합니다.
+    return run(() =&gt; addDoc(todoCollection(), {
+      title, done: false, createdAt: serverTimestamp(),
+    }))
+  }
+  function toggleTodo(todo) {
+    return run(() =&gt; updateDoc(doc(todoCollection(), todo.id), { done: !todo.done }))
+  }
+  function renameTodo(todo, value) {
+    const title = cleanTitle(value)
+    if (!title) return Promise.resolve(false)
+    return run(() =&gt; updateDoc(doc(todoCollection(), todo.id), { title }))
+  }
+  function removeTodo(todo) {
+    return run(() =&gt; deleteDoc(doc(todoCollection(), todo.id)))
+  }
+  return { todos, loading, busy, message, addTodo, toggleTodo, renameTodo, removeTodo }
+}
+</pre></details><h2 id="code24"><a data-slide="86">A24 · 수정 전후: 바뀌는 필드만 보기</a></h2><h3>정의</h3><p>updateDoc은 전달한 필드만 바꾸고 나머지 필드는 유지합니다.</p><h4>처음 문서</h4><p>title=&quot;과제&quot; · done=false · createdAt=T</p><h4>완료 체크</h4><p>{ done: true } → title·createdAt 유지</p><h4>제목 수정</h4><p>{ title: &quot;발표&quot; } → done·createdAt 유지</p><h3>직접 따라가기</h3><p>완료 체크 후 문서는 title=&quot;과제&quot;, done=true, createdAt=T입니다. 이어 제목을 바꾸면 title=&quot;발표&quot;, done=true, createdAt=T입니다. updateDoc은 전체 객체를 다시 만드는 코드가 아닙니다. 이 예시의 T는 기존 타임스탬프를 뜻합니다.</p><p>deleteDoc은 필드 수정과 달리 해당 문서를 제거합니다.</p><h2 id="code25"><a data-slide="87">A25 · 편집 시작과 저장 성공을 분리하기</a></h2><h3>정의</h3><p>편집 상태는 어느 항목을 수정 중인지와 아직 저장하지 않은 문자열을 기억합니다.</p><h4>startEdit(todo)</h4><p>문서 ID와 현재 제목을 편집 state에 복사</p><h4>입력 중</h4><p>editedTitle만 변경 · 서버 제목은 유지</p><h4>저장 성공</h4><p>renameTodo가 true → editingId=null로 닫기</p><h3>직접 따라가기</h3><p>editingId === todo.id인 항목만 편집 form을 보여 줍니다. editedTitle은 저장 전 임시 입력이며 todo.title은 관찰한 문서 값입니다. 둘을 나누면 저장 버튼을 누르기 전까지 기존 데이터를 유지할 수 있습니다.</p><p>저장 실패면 편집창을 유지합니다. 취소는 DB 요청 없이 닫습니다.</p><h3>코드</h3><pre>function startEdit(todo) {
+  setEditingId(todo.id)
+  setEditedTitle(todo.title)
+}
+async function saveEdit(event, todo) {
+  event.preventDefault()
+  if (await renameTodo(todo, editedTitle)) setEditingId(null)
+}</pre><h2 id="code26"><a data-slide="88">A26 · map과 key로 목록 표시</a></h2><h3>개념 정의</h3><p>map은 배열의 각 원소를 새로운 값으로 바꾸어 새 배열을 만듭니다.</p><h3>실행 예시</h3><p>문서 3개 → 목록 항목 3개 · 문서 ID는 고정</p><h3>코드를 읽는 순서</h3><h4>todos.map</h4><p>할 일 하나마다 &lt;li&gt; 하나 생성</p><h4>key={todo.id}</h4><p>React가 같은 항목을 구분</p><h4>이벤트</h4><p>체크박스는 toggleTodo(todo) 호출</p><h3>조금 더 자세히</h3><p>제목이 같아도 문서 ID가 다르면 서로 다른 항목입니다. 배열 인덱스를 key로 쓰면 삭제·정렬 후 다른 항목의 입력 상태를 재사용할 수 있어 여기서는 문서 ID를 씁니다. 완료 개수는 todos.filter(todo =&gt; todo.done).length로 계산합니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>map의 결과도 JSX 배열</h4><p>todos에 3개 객체가 있으면 콜백이 3번 실행되어 &lt;li&gt; 3개를 만듭니다. todo는 매 실행에서 현재 처리하는 객체입니다. todo.title과 todo.done은 그 항목의 화면 값을 결정합니다.</p><h4>안정적인 key의 의미</h4><p>같은 문서가 다음 렌더에서도 같은 key를 가지면 React가 같은 항목으로 구분할 수 있습니다. 순서가 바뀌는 목록에서 배열 위치를 key로 쓰면 다른 항목과 편집 상태가 섞일 수 있어 todo.id를 사용합니다.</p><h4>onChange={() =&gt; toggleTodo(todo)}</h4><p>함수를 이벤트에 전달해 사용자가 체크했을 때 호출하도록 합니다. onChange={toggleTodo(todo)}라고 쓰면 렌더 중 함수를 실행해 버립니다. 괄호 유무가 언제 실행할지 바꾼다는 점을 확인하세요.</p><details><summary>src/components/TodoPanel.jsx 전체 코드</summary><pre>import { useState } from &#x27;react&#x27;
+import { useTodos } from &#x27;../useTodos&#x27;
+
+export default function TodoPanel({ uid }) {
+  const { todos, loading, busy, message, addTodo, toggleTodo, renameTodo, removeTodo } = useTodos(uid)
+  const [title, setTitle] = useState(&#x27;&#x27;)
+  const [editingId, setEditingId] = useState(null)
+  const [editedTitle, setEditedTitle] = useState(&#x27;&#x27;)
+  // 렌더링할 때 배열에서 계산합니다. 별도 Effect나 상태가 필요하지 않습니다.
+  const completed = todos.filter(todo =&gt; todo.done).length
+
+  async function add(event) {
+    event.preventDefault()
+    if (await addTodo(title)) setTitle(&#x27;&#x27;) // 저장 실패 시 입력은 유지합니다.
+  }
+  function startEdit(todo) {
+    setEditingId(todo.id)
+    setEditedTitle(todo.title)
+  }
+  async function saveEdit(event, todo) {
+    event.preventDefault()
+    if (await renameTodo(todo, editedTitle)) setEditingId(null)
+  }
+  async function remove(todo) {
+    if (window.confirm(`“${todo.title}”을 삭제할까요?`)) await removeTodo(todo)
+  }
+
+  return (
+    &lt;section className=&quot;panel&quot;&gt;
+      &lt;div className=&quot;section-heading&quot;&gt;&lt;h2&gt;나의 목록&lt;/h2&gt;&lt;span&gt;표시 중 {todos.length}개 / 완료 {completed}개&lt;/span&gt;&lt;/div&gt;
+      &lt;form className=&quot;add-form&quot; onSubmit={add}&gt;
+        &lt;label className=&quot;sr-only&quot; htmlFor=&quot;new-todo&quot;&gt;새 할 일&lt;/label&gt;
+        &lt;input id=&quot;new-todo&quot; value={title} onChange={event =&gt; setTitle(event.target.value)}
+          placeholder=&quot;오늘 할 일을 적어 보세요&quot; maxLength={80} required disabled={busy} /&gt;
+        &lt;button className=&quot;primary&quot; disabled={busy || !title.trim()}&gt;추가&lt;/button&gt;
+      &lt;/form&gt;
+      {message &amp;&amp; &lt;p className=&quot;error&quot; role=&quot;alert&quot;&gt;{message}&lt;/p&gt;}
+      {loading ? &lt;p role=&quot;status&quot; className=&quot;empty&quot;&gt;목록을 불러오고 있습니다…&lt;/p&gt;
+        : !todos.length &amp;&amp; &lt;p className=&quot;empty&quot;&gt;첫 번째 할 일을 추가해 보세요.&lt;/p&gt;}
+      &lt;ul className=&quot;todo-list&quot;&gt;
+        {todos.map(todo =&gt; (
+          &lt;li key={todo.id}&gt;
+            {editingId === todo.id ? (
+              &lt;form className=&quot;edit-form&quot; onSubmit={event =&gt; saveEdit(event, todo)}&gt;
+                &lt;input value={editedTitle} onChange={event =&gt; setEditedTitle(event.target.value)}
+                  aria-label=&quot;할 일 수정&quot; maxLength={80} required disabled={busy} /&gt;
+                &lt;button className=&quot;primary&quot; disabled={busy}&gt;저장&lt;/button&gt;
+                &lt;button type=&quot;button&quot; className=&quot;quiet&quot; disabled={busy} onClick={() =&gt; setEditingId(null)}&gt;취소&lt;/button&gt;
+              &lt;/form&gt;
+            ) : (
+              &lt;&gt;
+                &lt;label className={`todo-title${todo.done ? &#x27; completed&#x27; : &#x27;&#x27;}`}&gt;
+                  &lt;input type=&quot;checkbox&quot; checked={todo.done} disabled={busy} onChange={() =&gt; toggleTodo(todo)} /&gt;
+                  &lt;span&gt;{todo.title}&lt;/span&gt;
+                &lt;/label&gt;
+                &lt;button className=&quot;quiet&quot; disabled={busy} onClick={() =&gt; startEdit(todo)} aria-label={`${todo.title} 수정`}&gt;수정&lt;/button&gt;
+                &lt;button className=&quot;quiet danger&quot; disabled={busy} onClick={() =&gt; remove(todo)} aria-label={`${todo.title} 삭제`}&gt;삭제&lt;/button&gt;
+              &lt;/&gt;
+            )}
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+      &lt;p className=&quot;hint&quot;&gt;최근 생성한 50개까지 표시합니다. 변경 사항은 Firebase에 저장됩니다.&lt;/p&gt;
+    &lt;/section&gt;
+  )
+}
+</pre></details><h2 id="code27"><a data-slide="89">A27 · filter와 length로 완료 개수 계산</a></h2><h3>정의</h3><p>filter는 조건을 만족하는 원소만 모아 새 배열을 만듭니다.</p><h4>목록 상태</h4><p>t1=false · t2=true · t3=true</p><h4>filter(todo =&gt; todo.done)</h4><p>완료된 t2와 t3만 남음</p><h4>결과.length</h4><p>남은 원소 수는 2 → 완료 2개 표시</p><h3>직접 따라가기</h3><p>todos가 갱신되면 렌더가 다시 실행되고 completed도 다시 계산됩니다. 원래 todos 배열을 지우거나 수정하지 않습니다. 이 앱은 최근 50개만 조회하므로 완료 개수 역시 표시 중인 문서 기준입니다.</p><p>completed는 현재 목록에서 계산하므로 별도 state가 필요하지 않습니다.</p><h3>코드</h3><pre>const completed = todos.filter(todo =&gt; todo.done).length</pre><h2 id="code28"><a data-slide="90">A28 · 오류 코드로 원인 좁히기</a></h2><h3>개념 정의</h3><p>오류 코드는 실패 원인을 프로그램이 구분할 수 있는 식별자입니다.</p><h3>실행 예시</h3><p>permission-denied → Rules·UID·문서 필드부터 확인</p><h3>코드를 읽는 순서</h3><h4>대응표</h4><p>messages[error.code]로 안내 문구 선택</p><h4>기본값</h4><p>모르는 코드는 원래 코드를 함께 표시</p><h4>찾는 위치</h4><p>인증 오류와 데이터 권한 오류를 구분</p><h3>조금 더 자세히</h3><p>auth/operation-not-allowed는 로그인 제공자 설정을 먼저 봅니다. auth/invalid-credential은 계정과 비밀번호를 확인합니다. permission-denied는 Rules가 요청을 허용하지 않은 경우입니다. 오류를 감추지 않고 현재 동작 가까이에 표시합니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>messages[error.code]</h4><p>대괄호는 변수에 담긴 문자열을 속성 이름으로 사용합니다. error.code가 &quot;permission-denied&quot;이면 오류 대응표의 그 항목을 읽습니다. messages.error.code처럼 점으로 이어 쓰는 것과 다릅니다.</p><h4>|| 기본 안내</h4><p>대응표에 항목이 없으면 조회 결과가 undefined여서 || 오른쪽 기본 문구를 사용합니다. 원래 오류 코드도 남겨야 새로운 오류가 발생했을 때 검색하거나 문의할 수 있습니다.</p><h4>원인을 구분해 고치기</h4><p>auth/operation-not-allowed이면 Authentication 제공자 활성화를, auth/invalid-credential이면 입력한 계정을 확인합니다. permission-denied는 Rules 거부이므로 로그인 계정과 문서 경로, 전송 필드를 차례로 비교합니다.</p><details><summary>src/errors.js 전체 코드</summary><pre>const messages = {
+  &#x27;auth/invalid-credential&#x27;: &#x27;이메일 또는 비밀번호를 확인해 주세요.&#x27;,
+  &#x27;auth/wrong-password&#x27;: &#x27;이메일 또는 비밀번호를 확인해 주세요.&#x27;,
+  &#x27;auth/user-not-found&#x27;: &#x27;이메일 또는 비밀번호를 확인해 주세요.&#x27;,
+  &#x27;auth/invalid-email&#x27;: &#x27;이메일 형식을 확인해 주세요.&#x27;,
+  &#x27;auth/email-already-in-use&#x27;: &#x27;가입할 수 없습니다. 기존 계정 로그인을 확인해 주세요.&#x27;,
+  &#x27;auth/weak-password&#x27;: &#x27;Firebase에 설정한 비밀번호 정책을 확인해 주세요.&#x27;,
+  &#x27;auth/password-does-not-meet-requirements&#x27;: &#x27;비밀번호 정책을 충족하지 않습니다.&#x27;,
+  &#x27;auth/operation-not-allowed&#x27;: &#x27;Firebase에서 이메일/비밀번호 로그인을 켜 주세요.&#x27;,
+  &#x27;auth/network-request-failed&#x27;: &#x27;인터넷 연결을 확인해 주세요.&#x27;,
+  &#x27;auth/too-many-requests&#x27;: &#x27;요청이 많습니다. 잠시 뒤 다시 시도해 주세요.&#x27;,
+  &#x27;permission-denied&#x27;: &#x27;데이터 권한을 확인해 주세요. Firestore Rules와 UID를 확인합니다.&#x27;,
+  &#x27;unavailable&#x27;: &#x27;서버에 연결할 수 없습니다. 인터넷 연결을 확인해 주세요.&#x27;,
+}
+export function errorMessage(error) {
+  return messages[error.code] || `요청을 처리하지 못했습니다. (${error.code || &#x27;unknown&#x27;})`
+}
+</pre></details><h2 id="code29"><a data-slide="91">A29 · Rules에서 문서 주인 확인</a></h2><h3>개념 정의</h3><p>Security Rules는 Firebase 서버가 각 데이터 요청의 허용 여부를 판단하는 규칙입니다.</p><h3>실행 예시</h3><p>A가 users/A/todos 읽기: 허용 · B가 같은 경로 읽기: 거부</p><h3>코드를 읽는 순서</h3><h4>경로의 uid</h4><p>/users/{uid}/todos/{todoId}에서 얻은 값</p><h4>request.auth</h4><p>로그인한 요청자의 인증 정보</p><h4>isOwner</h4><p>로그인한 UID와 경로 UID가 같아야 true</p><h3>조금 더 자세히</h3><p>브라우저에서 uid 문자열을 바꾸더라도 request.auth.uid는 임의 문자열이 아니라 인증된 요청 정보입니다. 화면에서 다른 계정의 목록을 숨기는 것과 서버가 접근을 거부하는 것은 서로 다른 단계입니다. 로그인하지 않은 요청은 request.auth가 null입니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>경로 변수 {uid}</h4><p>중괄호는 실제 요청 경로에서 값을 받는 자리입니다. users/ABC/todos/t1 요청에서는 uid가 ABC이고 todoId가 t1입니다. JavaScript 템플릿 문법이 아니라 Rules의 경로 매칭 문법입니다.</p><h4>request.auth != null &amp;&amp; ...</h4><p>&amp;&amp;는 두 조건을 모두 만족해야 참입니다. 먼저 인증 정보가 있는지 검사하고, 있을 때만 request.auth.uid를 경로의 uid와 비교합니다. 미로그인 요청은 앞 조건에서 거부됩니다.</p><h4>read, delete에 적용되는 조건</h4><p>이 샘플은 조회·삭제에는 isOwner를 요구합니다. 생성·수정에는 소유자 조건에 더해 데이터 형식과 변경 필드 조건을 요구합니다. 한 allow 줄이 모든 요청 종류를 허용하는 것은 아닙니다.</p><details><summary>firestore.rules 전체 코드</summary><pre>rules_version = &#x27;2&#x27;;
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid}/todos/{todoId} {
+      function isOwner() {
+        return request.auth != null &amp;&amp; request.auth.uid == uid;
+      }
+      function validTodo() {
+        let data = request.resource.data;
+        return data.keys().hasAll([&#x27;title&#x27;, &#x27;done&#x27;, &#x27;createdAt&#x27;])
+          &amp;&amp; data.keys().hasOnly([&#x27;title&#x27;, &#x27;done&#x27;, &#x27;createdAt&#x27;])
+          &amp;&amp; data.title is string
+          &amp;&amp; data.title.size() &gt; 0 &amp;&amp; data.title.size() &lt;= 80
+          &amp;&amp; data.title.matches(&#x27;.*[^ ].*&#x27;)
+          &amp;&amp; data.done is bool
+          &amp;&amp; data.createdAt is timestamp;
+      }
+      allow read, delete: if isOwner();
+      allow create: if isOwner() &amp;&amp; validTodo()
+        &amp;&amp; request.resource.data.done == false
+        &amp;&amp; request.resource.data.createdAt == request.time;
+      allow update: if isOwner() &amp;&amp; validTodo()
+        &amp;&amp; request.resource.data.diff(resource.data)
+          .affectedKeys().hasOnly([&#x27;title&#x27;, &#x27;done&#x27;]);
+    }
+  }
+}
+</pre></details><h2 id="code30"><a data-slide="92">A30 · 같은 경로에 세 사람이 요청하면</a></h2><h3>정의</h3><p>인증된 UID와 요청 경로의 UID가 같아야 소유자 조건을 통과합니다.</p><h4>미로그인 → users/ABC/todos</h4><p>request.auth = null → 거부</p><h4>ABC 로그인 → 같은 경로</h4><p>&quot;ABC&quot; === &quot;ABC&quot; → 조회 허용</p><h4>XYZ 로그인 → 같은 경로</h4><p>&quot;XYZ&quot; !== &quot;ABC&quot; → 거부</p><h3>직접 따라가기</h3><p>이 표는 read 요청의 소유자 검사를 예로 듭니다. create나 update에서는 소유자 조건을 통과하더라도 validTodo와 생성·수정 조건까지 충족해야 합니다. Firebase 웹 설정값을 알고 있다는 사실은 소유자 권한을 주지 않습니다.</p><p>브라우저에서 경로만 ABC로 바꿔도 인증 UID는 XYZ입니다.</p><h2 id="code31"><a data-slide="93">A31 · Rules에서 필드와 자료형 검사</a></h2><h3>개념 정의</h3><p>request.resource.data는 쓰기가 성공했을 때의 문서 전체 모습입니다.</p><h3>실행 예시</h3><p>done=&quot;false&quot;는 문자열 → 거부 · done=false는 불리언</p><h3>코드를 읽는 순서</h3><h4>키 목록</h4><p>title·done·createdAt만 정확히 허용</p><h4>자료형</h4><p>문자열 · 불리언 · 타임스탬프</p><h4>title 조건</h4><p>빈 문자열·너무 긴 값·공백만 있는 값 거부</p><h3>조금 더 자세히</h3><p>hasAll은 필요한 필드가 빠지지 않았는지, hasOnly는 추가 필드가 없는지 검사합니다. validTodo를 통과해도 isOwner와 생성·수정별 조건을 함께 만족해야 합니다. 클라이언트의 required나 maxLength만으로 서버 데이터를 보호할 수는 없습니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>hasAll과 hasOnly를 함께 사용</h4><p>hasAll은 title, done, createdAt이 모두 있는지 확인합니다. hasOnly는 그 세 필드 외의 필드가 없는지 확인합니다. 둘을 결합하면 필요한 필드가 정확히 존재하도록 제한할 수 있습니다.</p><h4>형식과 내용은 별도 조건</h4><p>title is string은 자료형 검사입니다. size() 범위와 matches는 내용 검사입니다. done에 문자열 &quot;false&quot;를 보내면 사람이 보기에는 비슷해도 bool 조건을 통과하지 못합니다.</p><h4>공백 검사 표현식의 범위</h4><p>현재 matches(&#x27;.*[^ ].*&#x27;)는 일반 공백 외의 문자가 적어도 하나 있는지 검사합니다. 모든 종류의 공백을 trim과 똑같이 처리한다는 뜻은 아닙니다. 브라우저 검사와 서버 Rules의 실제 조건을 각각 읽어야 합니다.</p><details><summary>firestore.rules 전체 코드</summary><pre>rules_version = &#x27;2&#x27;;
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid}/todos/{todoId} {
+      function isOwner() {
+        return request.auth != null &amp;&amp; request.auth.uid == uid;
+      }
+      function validTodo() {
+        let data = request.resource.data;
+        return data.keys().hasAll([&#x27;title&#x27;, &#x27;done&#x27;, &#x27;createdAt&#x27;])
+          &amp;&amp; data.keys().hasOnly([&#x27;title&#x27;, &#x27;done&#x27;, &#x27;createdAt&#x27;])
+          &amp;&amp; data.title is string
+          &amp;&amp; data.title.size() &gt; 0 &amp;&amp; data.title.size() &lt;= 80
+          &amp;&amp; data.title.matches(&#x27;.*[^ ].*&#x27;)
+          &amp;&amp; data.done is bool
+          &amp;&amp; data.createdAt is timestamp;
+      }
+      allow read, delete: if isOwner();
+      allow create: if isOwner() &amp;&amp; validTodo()
+        &amp;&amp; request.resource.data.done == false
+        &amp;&amp; request.resource.data.createdAt == request.time;
+      allow update: if isOwner() &amp;&amp; validTodo()
+        &amp;&amp; request.resource.data.diff(resource.data)
+          .affectedKeys().hasOnly([&#x27;title&#x27;, &#x27;done&#x27;]);
+    }
+  }
+}
+</pre></details><p>공식 문서: <a href="https://firebase.google.com/docs/firestore/security/rules-fields" target="_blank" rel="noopener">https://firebase.google.com/docs/firestore/security/rules-fields</a></p><h2 id="code32"><a data-slide="94">A32 · 생성과 수정에 다른 조건 적용</a></h2><h3>개념 정의</h3><p>resource.data는 기존 문서, request.resource.data는 변경 후 문서입니다.</p><h3>실행 예시</h3><p>제목 수정은 허용 · createdAt 변경이나 추가 필드 삽입은 거부</p><h3>코드를 읽는 순서</h3><h4>create</h4><p>처음에는 done=false · 생성 시각은 서버 시각</p><h4>update</h4><p>바뀐 필드는 title·done으로 제한</p><h4>유지</h4><p>수정으로 createdAt을 바꿀 수 없습니다.</p><h3>조금 더 자세히</h3><p>diff는 기존 문서와 새 문서의 차이를 구합니다. affectedKeys().hasOnly는 변경된 필드 집합을 검사합니다. 따라서 새 문서 전체의 필드 목록을 검사하는 validTodo와 역할이 다릅니다. 두 검사와 소유자 검사 모두 필요합니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>생성: 문서가 없던 경우</h4><p>새 문서를 추가하면 create 규칙을 검사합니다. 소유자이고 validTodo를 통과해야 하며, 첫 done은 false, createdAt은 request.time이어야 합니다. 처음부터 완료 상태를 보내면 이 샘플에서는 거부됩니다.</p><h4>수정: 변경 후 전체 모습</h4><p>updateDoc에 { title: &quot;수정&quot; }만 보내도 request.resource.data는 수정 후 문서 전체를 가리킵니다. title 외에 유지된 done과 createdAt도 포함하므로 validTodo가 전체 형태를 검사할 수 있습니다.</p><h4>diff(...).affectedKeys().hasOnly(...)</h4><p>기존 resource.data와 수정 후 데이터를 비교해 값이 달라진 필드 이름을 얻습니다. 바뀐 이름이 title과 done의 범위 안에 있어야 합니다. createdAt을 다른 값으로 바꾸면 validTodo의 자료형 검사를 통과해도 이 변경 제한에서 거부됩니다.</p><details><summary>firestore.rules 전체 코드</summary><pre>rules_version = &#x27;2&#x27;;
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid}/todos/{todoId} {
+      function isOwner() {
+        return request.auth != null &amp;&amp; request.auth.uid == uid;
+      }
+      function validTodo() {
+        let data = request.resource.data;
+        return data.keys().hasAll([&#x27;title&#x27;, &#x27;done&#x27;, &#x27;createdAt&#x27;])
+          &amp;&amp; data.keys().hasOnly([&#x27;title&#x27;, &#x27;done&#x27;, &#x27;createdAt&#x27;])
+          &amp;&amp; data.title is string
+          &amp;&amp; data.title.size() &gt; 0 &amp;&amp; data.title.size() &lt;= 80
+          &amp;&amp; data.title.matches(&#x27;.*[^ ].*&#x27;)
+          &amp;&amp; data.done is bool
+          &amp;&amp; data.createdAt is timestamp;
+      }
+      allow read, delete: if isOwner();
+      allow create: if isOwner() &amp;&amp; validTodo()
+        &amp;&amp; request.resource.data.done == false
+        &amp;&amp; request.resource.data.createdAt == request.time;
+      allow update: if isOwner() &amp;&amp; validTodo()
+        &amp;&amp; request.resource.data.diff(resource.data)
+          .affectedKeys().hasOnly([&#x27;title&#x27;, &#x27;done&#x27;]);
+    }
+  }
+}
+</pre></details><p>공식 문서: <a href="https://firebase.google.com/docs/firestore/security/rules-fields" target="_blank" rel="noopener">https://firebase.google.com/docs/firestore/security/rules-fields</a></p><h2 id="code33"><a data-slide="95">A33 · 수정 요청을 Rules처럼 판정해 보기</a></h2><h3>정의</h3><p>전체 문서의 유효성과 변경한 필드의 허용 여부를 함께 확인합니다.</p><h4>title만 &quot;발표&quot;로 수정</h4><p>형식 정상 · 바뀐 필드 [title] → 허용</p><h4>done을 &quot;true&quot;로 수정</h4><p>문자열이므로 bool 검사 실패 → 거부</p><h4>createdAt을 다른 시각으로</h4><p>형식은 timestamp · 허용 필드 밖 → 거부</p><h3>직접 따라가기</h3><p>기존 문서는 title=&quot;과제&quot;, done=false, createdAt=T라고 가정합니다. updateDoc({title:&quot;발표&quot;})의 요청 후 문서에도 done과 createdAt은 남으므로 hasAll은 통과합니다. 반면 createdAt을 바꾸면 affectedKeys에 createdAt이 포함되어 거부됩니다.</p><p>위 예시는 모두 문서 소유자로 로그인한 상태를 가정합니다.</p><h2 id="code34"><a data-slide="96">A34 · Pages workflow의 실행 조건</a></h2><h3>개념 정의</h3><p>workflow는 저장소 이벤트에 반응해 실행하는 자동화 정의입니다.</p><h3>실행 예시</h3><p>main에 새 커밋 push → Deploy to GitHub Pages 실행</p><h3>코드를 읽는 순서</h3><h4>on</h4><p>main push 또는 수동 실행으로 시작</p><h4>permissions</h4><p>소스 읽기·Pages 게시에 필요한 권한</p><h4>concurrency</h4><p>같은 그룹의 이전 실행을 취소</p><h3>조금 더 자세히</h3><p>YAML에서는 들여쓰기가 구조를 결정합니다. runs-on은 작업을 실행할 GitHub runner 환경이고 학생의 Ubuntu 서버 주소가 아닙니다. id-token: write는 배포 인증을 위한 토큰 발급 권한입니다. 이번 Ubuntu 배포는 별도로 직접 scp 업로드합니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>on과 jobs의 역할</h4><p>on은 언제 시작할지, jobs는 무엇을 실행할지 정의합니다. main에 push하거나 Actions에서 수동 실행하면 workflow가 시작됩니다. YAML은 들여쓰기로 소속을 나타내므로 복사할 때 공백을 유지하세요.</p><h4>권한의 범위</h4><p>contents: read는 코드 읽기, pages: write는 Pages 게시, id-token: write는 배포 인증 토큰 발급을 위한 권한입니다. 여기의 write는 학생 Ubuntu 계정의 파일 쓰기 권한과 관계없습니다.</p><h4>concurrency와 최신 실행</h4><p>같은 pages 그룹에 새 실행이 들어오면 cancel-in-progress 설정으로 이전 실행을 취소합니다. 이전 커밋의 오래된 배포 작업이 계속 진행되는 상황을 줄입니다. GitHub Actions 실행 번호와 커밋을 함께 확인하세요.</p><details><summary>.github/workflows/pages.yml 전체 코드</summary><pre>name: Deploy to GitHub Pages
+# [배포 1] main push 또는 Actions 화면의 수동 실행이 시작 조건입니다.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+      VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+      VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+      VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+    # [배포 2] 아래 steps는 GitHub runner에서 위에서 아래로 실행됩니다.
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: &#x27;24&#x27;
+          cache: npm
+      # lock 파일의 버전으로 설치합니다. setup-node 자체는 앱 패키지를 설치하지 않습니다.
+      - run: npm ci
+      - uses: actions/configure-pages@v6
+        id: pages
+      # [배포 3] 소스를 브라우저용 파일로 변환해 dist 폴더에 만듭니다.
+      - name: Build
+        run: npm run build
+        env:
+          VITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+      # [배포 4] dist를 전달한 뒤 Pages가 공개 URL에 게시합니다.
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5
+</pre></details><h2 id="code35"><a data-slide="97">A35 · runner에 설정값 전달하고 빌드</a></h2><h3>개념 정의</h3><p>환경 변수는 프로세스에 이름과 값으로 전달하는 설정입니다.</p><h3>실행 예시</h3><p>Secret 변경만으로 기존 dist가 바뀌지 않음 → 다시 빌드</p><h3>코드를 읽는 순서</h3><h4>Secrets → env</h4><p>네 설정값을 runner의 빌드 환경으로 전달</p><h4>npm ci</h4><p>lock 파일 기준으로 의존성 설치</p><h4>npm run build</h4><p>검사 후 Vite가 dist를 생성</p><h3>조금 더 자세히</h3><p>사용자 PC의 .env.local은 저장소에 올리지 않습니다. Actions에서는 같은 변수 이름으로 Secrets를 주입합니다. VITE_ 설정은 브라우저 코드에 포함되므로 비밀 보관 수단이 아닙니다. 이 샘플은 scripts/check-env.mjs가 누락값을 먼저 검사합니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>secrets → env → Vite</h4><p>저장소 Secrets에 등록한 값을 workflow의 env 이름으로 전달합니다. 빌드 프로세스가 VITE_FIREBASE_... 이름으로 읽고, Vite가 프런트엔드 코드에 반영합니다. 이름의 대소문자와 밑줄을 정확히 일치시켜야 합니다.</p><h4>npm ci와 npm run build</h4><p>npm ci는 package-lock.json에 맞춰 의존성을 설치합니다. npm run build는 package.json에 정의된 빌드 명령을 실행합니다. 이 샘플은 환경 변수 검사를 먼저 실행하고, 통과하면 Vite가 dist를 만듭니다.</p><h4>Secrets 변경 후 재실행</h4><p>이미 게시한 파일은 이전 빌드 결과입니다. Secrets 수정 뒤 Actions를 다시 실행하거나 새 커밋을 push해서 다시 빌드해야 합니다. VITE_ 변수는 브라우저에 포함되므로 서비스 계정 개인키를 넣는 자리가 아닙니다.</p><details><summary>.github/workflows/pages.yml 전체 코드</summary><pre>name: Deploy to GitHub Pages
+# [배포 1] main push 또는 Actions 화면의 수동 실행이 시작 조건입니다.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+      VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+      VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+      VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+    # [배포 2] 아래 steps는 GitHub runner에서 위에서 아래로 실행됩니다.
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: &#x27;24&#x27;
+          cache: npm
+      # lock 파일의 버전으로 설치합니다. setup-node 자체는 앱 패키지를 설치하지 않습니다.
+      - run: npm ci
+      - uses: actions/configure-pages@v6
+        id: pages
+      # [배포 3] 소스를 브라우저용 파일로 변환해 dist 폴더에 만듭니다.
+      - name: Build
+        run: npm run build
+        env:
+          VITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+      # [배포 4] dist를 전달한 뒤 Pages가 공개 URL에 게시합니다.
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5
+</pre></details><h2 id="code36"><a data-slide="98">A36 · 배포 설정값도 빌드 전에 검사</a></h2><h3>정의</h3><p>빌드 검사는 누락된 설정으로 dist가 만들어지는 것을 먼저 막습니다.</p><h4>loadEnv + process.env</h4><p>파일 설정과 실행 환경을 합칩니다.</p><h4>keys.filter(...)</h4><p>누락·예시값인 변수 이름만 추립니다.</p><h4>process.exit(1)</h4><p>누락이 있으면 실패 상태로 빌드를 중단합니다.</p><h3>직접 따라가기</h3><p>객체 펼침에서 뒤에 오는 process.env 값이 같은 이름의 파일 설정을 덮어씁니다. filter는 조건이 참인 변수 이름만 missing 배열에 남깁니다. missing.length가 0이면 누락 이름이 없으므로 종료 코드를 실행하지 않습니다. 정확한 프로젝트인지까지 검증하는 코드는 아닙니다.</p><p>설정 누락 오류 → 변수 이름과 값을 수정 → 다시 빌드</p><h3>코드</h3><pre>const missing = keys.filter(key =&gt; !env[key] || env[key].includes(&#x27;YOUR_&#x27;))
+if (missing.length) {
+  console.error(&#x27;Firebase 설정 누락: &#x27; + missing.join(&#x27;, &#x27;))
+  console.error(&#x27;.env.local 또는 GitHub Actions의 Secrets를 확인하세요.&#x27;)
+  process.exit(1)
+}</pre><h2 id="code37"><a data-slide="99">A37 · dist 전달과 Pages 게시</a></h2><h3>개념 정의</h3><p>artifact는 작업 결과로 보관하거나 다음 단계에 전달하는 파일 묶음입니다.</p><h3>실행 예시</h3><p>src 업로드가 아니라 빌드된 dist 게시</p><h3>코드를 읽는 순서</h3><h4>upload</h4><p>빌드된 dist를 Pages용 artifact로 전달</p><h4>deploy</h4><p>artifact를 공개 사이트에 게시</p><h4>검증</h4><p>성공 로그와 실제 공개 화면을 함께 확인</p><h3>조금 더 자세히</h3><p>uses는 준비된 Action을 호출하고 run은 셸 명령을 실행합니다. steps는 위에서 아래로 실행되므로 빌드 실패 시 게시 단계까지 정상 진행되지 않습니다. 성공한 커밋 SHA와 화면의 수정 내용을 비교해야 최신 배포인지 알 수 있습니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>uses와 with</h4><p>uses는 준비된 Action을 호출하고 with는 그 Action에 넘길 입력값입니다. upload-pages-artifact의 path: dist는 빌드 결과 폴더를 전송 대상으로 지정합니다. dist가 없으면 먼저 빌드 단계 로그를 확인합니다.</p><h4>id와 출력 참조</h4><p>deploy 단계의 id: deployment는 다른 설정에서 이 단계의 출력을 참조할 이름입니다. steps.deployment.outputs.page_url은 배포 단계가 제공한 URL을 읽습니다. id와 표시용 name은 역할이 다릅니다.</p><h4>성공 표시와 실제 화면</h4><p>Actions의 초록 체크는 workflow의 실행 결과입니다. 배포 URL을 열어 자원 404가 없는지, 로그인과 데이터 읽기가 되는지 확인해야 사용자 동작까지 점검한 것입니다.</p><details><summary>.github/workflows/pages.yml 전체 코드</summary><pre>name: Deploy to GitHub Pages
+# [배포 1] main push 또는 Actions 화면의 수동 실행이 시작 조건입니다.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+      VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+      VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+      VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+    # [배포 2] 아래 steps는 GitHub runner에서 위에서 아래로 실행됩니다.
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: &#x27;24&#x27;
+          cache: npm
+      # lock 파일의 버전으로 설치합니다. setup-node 자체는 앱 패키지를 설치하지 않습니다.
+      - run: npm ci
+      - uses: actions/configure-pages@v6
+        id: pages
+      # [배포 3] 소스를 브라우저용 파일로 변환해 dist 폴더에 만듭니다.
+      - name: Build
+        run: npm run build
+        env:
+          VITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+      # [배포 4] dist를 전달한 뒤 Pages가 공개 URL에 게시합니다.
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5
+</pre></details><h2 id="code38"><a data-slide="100">A38 · Vite base와 URL 경로</a></h2><h3>개념 정의</h3><p>base는 빌드된 파일이 서비스될 URL의 기준 경로입니다.</p><h3>실행 예시</h3><p>/mini-todo/assets/...와 /assets/...는 서로 다른 주소</p><h3>코드를 읽는 순서</h3><h4>Pages</h4><p>프로젝트 사이트는 /저장소이름/ 경로 사용</p><h4>Ubuntu</h4><p>사이트 루트에 올리면 / 사용</p><h4>값 선택</h4><p>VITE_BASE_PATH가 없으면 /로 설정</p><h3>조금 더 자세히</h3><p>VITE_BASE_PATH=/ npm run build는 이번 명령의 빌드 환경에 값을 전달합니다. Pages workflow는 configure-pages의 base_path 출력을 사용합니다. 잘못된 base는 index.html은 보이지만 JS·CSS가 404인 빈 화면의 원인이 될 수 있습니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>process.env.VITE_BASE_PATH || &#x27;/&#x27;</h4><p>빌드 프로세스의 환경 변수 값을 먼저 읽습니다. 값이 없거나 빈 문자열이면 || 오른쪽 /를 사용합니다. 서버 파일 시스템 경로가 아니라 브라우저에서 자원을 요청할 URL 기준입니다.</p><h4>같은 앱, 다른 자원 URL</h4><p>저장소 이름이 mini-todo인 Pages 프로젝트 사이트는 /mini-todo/assets/...가 필요할 수 있습니다. Ubuntu 사이트 루트에 올리면 /assets/...를 사용합니다. 이미 빌드된 파일을 다른 위치로 옮기기만 하면 기준 경로는 자동으로 바뀌지 않습니다.</p><h4>404가 나면 확인할 순서</h4><p>개발자 도구 Network에서 실패한 JS 파일의 URL을 확인합니다. 실제 게시 위치와 base가 맞는지 비교한 뒤 올바른 값으로 다시 빌드합니다. Firebase 설정 문제로 단정하기 전에 JS 자체가 로드됐는지 먼저 보세요.</p><details><summary>vite.config.js 전체 코드</summary><pre>import { defineConfig } from &#x27;vite&#x27;
+import react from &#x27;@vitejs/plugin-react&#x27;
+
+export default defineConfig({
+  plugins: [react()],
+  base: process.env.VITE_BASE_PATH || &#x27;/&#x27;,
+})
+</pre></details><h2 id="code39"><a data-slide="101">A39 · Nginx의 root와 index</a></h2><h3>개념 정의</h3><p>웹 서버는 HTTP 요청을 받아 파일이나 처리 결과를 응답하는 프로그램입니다.</p><h3>실행 예시</h3><p>GET / → /var/www/mini-todo/index.html</p><h3>코드를 읽는 순서</h3><h4>listen 80</h4><p>HTTP 요청을 받을 포트</p><h4>root</h4><p>서버에서 파일을 찾기 시작할 폴더</p><h4>index</h4><p>폴더 주소로 요청하면 제공할 기본 파일</p><h3>조금 더 자세히</h3><p>로컬의 dist 안에 있는 내용이 /var/www/mini-todo 안에 놓여야 합니다. dist 폴더 자체를 한 겹 더 넣으면 root 바로 아래에 index.html이 없어집니다. server_name _와 default_server 조합은 수업용 단일 사이트 VM의 기본 요청 처리 설정입니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>listen과 server_name</h4><p>listen 80은 HTTP 80번 포트를 수신합니다. default_server는 해당 주소·포트에서 이름이 매칭되지 않은 요청의 기본 서버를 지정합니다. server_name _ 자체가 모든 이름을 매칭하는 특별한 와일드카드는 아닙니다.</p><h4>root와 index를 조합</h4><p>root /var/www/mini-todo에 URI를 이어 실제 파일을 찾습니다. / 요청에는 index index.html 설정을 사용합니다. 따라서 /var/www/mini-todo/index.html이 있어야 합니다. /var/www/mini-todo/dist/index.html이면 한 겹 깊게 올린 것입니다.</p><h4>설정 파일 반영</h4><p>설정 파일을 수정한 것만으로 실행 중인 Nginx 설정이 바뀌지는 않습니다. sudo nginx -t로 문법과 참조 파일을 점검하고 성공한 뒤 sudo systemctl reload nginx로 반영합니다. nginx -t가 성공해도 웹 파일의 배치까지 검증한 것은 아닙니다.</p><p>참고: <a href="https://nginx.org/en/docs/http/ngx_http_core_module.html#try_files" target="_blank" rel="noopener">Nginx root·try_files 문서</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control" target="_blank" rel="noopener">Cache-Control의 no-cache 의미</a></p><details><summary>deploy/nginx-mini-todo.conf 전체 코드</summary><pre>server {
+    listen 80 default_server;
+    server_name _;
+    root /var/www/mini-todo;
+    index index.html;
+    location /assets/ { try_files $uri =404; }
+    location / {
+        try_files $uri $uri/ /index.html;
+        add_header Cache-Control &quot;no-cache&quot;;
+    }
+}
+</pre></details><h2 id="code40"><a data-slide="102">A40 · try_files로 파일과 화면 경로 처리</a></h2><h3>개념 정의</h3><p>try_files는 요청 경로에 해당하는 파일·폴더를 순서대로 검사합니다.</p><h3>실행 예시</h3><p>/assets/없는파일.js → 404 · /todos → index.html</p><h3>코드를 읽는 순서</h3><h4>/assets/</h4><p>실제 정적 파일이 없으면 404 응답</p><h4>그 외 경로</h4><p>파일 → 폴더 → /index.html 순서</p><h4>새로고침</h4><p>브라우저의 화면 경로 요청에도 앱 HTML 제공</p><h3>조금 더 자세히</h3><p>SPA는 하나의 HTML에서 화면을 바꾸는 앱입니다. 이 샘플은 별도의 화면 라우터를 사용하지 않지만 설정은 HTML fallback을 준비합니다. /assets/까지 무조건 index.html을 주면 누락된 JS 요청에 HTML이 반환되어 원인 파악이 어려워집니다. nginx -t 성공 후 reload합니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>$uri와 =404</h4><p>$uri는 Nginx가 처리하는 요청 URI입니다. /assets/ 위치의 try_files $uri =404는 해당 파일이 있으면 제공하고 없으면 404로 끝냅니다. 이 문자열은 셸 변수가 아니므로 설정 파일에 $uri 그대로 남아야 합니다.</p><h4>$uri/와 /index.html</h4><p>일반 location은 파일, 디렉터리를 차례로 확인하고 없으면 /index.html로 내부 전환합니다. 브라우저의 앱 경로를 새로고침해도 HTML을 받을 수 있게 하는 설정입니다. 실제 화면 경로 처리는 앱 라우터가 구현해야 합니다.</p><h4>no-cache의 의미</h4><p>Cache-Control: no-cache는 저장 자체를 무조건 금지한다는 뜻이 아니라, 재사용 전에 서버에 유효성을 확인하도록 요구합니다. 이 설정에서는 일반 location 응답에 적용합니다. 자원이 없는데 HTML을 JS 대신 돌려주는 문제와는 구분하세요.</p><p>참고: <a href="https://nginx.org/en/docs/http/ngx_http_core_module.html#try_files" target="_blank" rel="noopener">Nginx root·try_files 문서</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control" target="_blank" rel="noopener">Cache-Control의 no-cache 의미</a></p><details><summary>deploy/nginx-mini-todo.conf 전체 코드</summary><pre>server {
+    listen 80 default_server;
+    server_name _;
+    root /var/www/mini-todo;
+    index index.html;
+    location /assets/ { try_files $uri =404; }
+    location / {
+        try_files $uri $uri/ /index.html;
+        add_header Cache-Control &quot;no-cache&quot;;
+    }
+}
+</pre></details><h2 id="code41"><a data-slide="103">A41 · 요청 URL이 서버 파일로 연결되는 과정</a></h2><h3>정의</h3><p>URL 경로와 Ubuntu 파일 경로는 root 설정을 기준으로 연결됩니다.</p><h4>GET /</h4><p>/var/www/mini-todo/index.html 제공</p><h4>GET /assets/app.js</h4><p>같은 root의 assets/app.js 제공 · 없으면 404</p><h4>GET /todos</h4><p>파일·폴더가 없으면 /index.html로 내부 전환</p><h3>직접 따라가기</h3><p>주소창 경로를 서버가 받았을 때의 처리입니다. /todos에 대한 HTML 제공만으로 Todo 페이지가 구현되지는 않습니다. React의 라우터가 있다면 이후 그 경로를 해석합니다. 실제 파일 누락과 앱 경로 처리를 구분해야 404 원인을 찾을 수 있습니다.</p><p>이 샘플의 /todos는 fallback 예시이며 별도 라우터 화면은 구현하지 않았습니다.</p><h2 id="code42"><a data-slide="104">A42 · 버튼 하나의 전체 실행 흐름</a></h2><h3>개념 정의</h3><p>입력, 요청, 서버 검사, 결과 반영은 서로 다른 단계입니다.</p><h3>실행 예시</h3><p>저장 실패: 오류 코드 확인 → UID·Rules·필드값 순서로 점검</p><h3>코드를 읽는 순서</h3><h4>입력 → 요청</h4><p>TodoPanel.add → useTodos.addTodo → addDoc</p><h4>서버 검사</h4><p>isOwner + validTodo + create 조건</p><h4>응답 → 화면</h4><p>요청 성공 → 입력 초기화 · 스냅샷 → 목록 갱신</p><h3>조금 더 자세히</h3><p>실행 흐름을 읽을 때 함수 이름으로 파일을 따라갑니다. addTodo는 생성 요청, onSnapshot은 관찰 결과의 반영을 맡습니다. 입력이 사라지는 조건과 목록이 갱신되는 경로를 구분하면 비동기 실행을 이해하기 쉽습니다.</p><h3>문법과 실행 과정을 자세히 읽기</h3><h4>입력값부터 함수 따라가기</h4><p>TodoPanel의 title이 addTodo(title)의 인자가 되고 cleanTitle을 거쳐 addDoc의 title 필드가 됩니다. 같은 title이라는 단어도 화면 상태, 함수 지역 변수, 저장 필드라는 서로 다른 위치에서 사용됩니다.</p><h4>두 결과 경로</h4><p>run의 반환값은 입력창을 지울지 결정합니다. onSnapshot 콜백은 목록에 무엇을 보여 줄지 결정합니다. 쓰기 응답과 관찰 알림의 순서를 하나로 고정하지 않고 각자의 역할로 이해하세요.</p><h4>실패 지점부터 확인하기</h4><p>입력 검사에서 false라면 DB 요청 전입니다. permission-denied라면 서버 Rules가 거부했습니다. 저장은 됐는데 목록이 비어 있다면 조회 경로·정렬 필드·관찰 오류를 확인합니다. 증상마다 확인할 파일이 다릅니다.</p></main><script>(()=>{
+  function prepare(root){root.querySelectorAll('pre').forEach(pre=>{
+    if(pre.dataset.copyReady)return;pre.dataset.copyReady='true';
+    const button=document.createElement('button');button.type='button';button.className='copy-snippet';button.textContent='복사';button.setAttribute('aria-label','코드 전체 복사');
+    button.addEventListener('click',async()=>{
+      const lines=pre.querySelectorAll('.code-line');const value=lines.length?[...lines].map(l=>l.textContent).join('\n'):pre.textContent;
+      let ok=false;try{await navigator.clipboard.writeText(value);ok=true}catch{
+        const input=document.createElement('textarea');input.value=value;input.style.cssText='position:fixed;top:0;left:0;opacity:0';document.body.append(input);input.select();ok=document.execCommand('copy');input.remove();
+      }
+      button.textContent=ok?'복사됨':'직접 선택 후 복사';setTimeout(()=>button.textContent='복사',1700);
+    });
+    const header=pre.closest('.mac-window')?.querySelector('.mac-header');if(header)header.append(button);else pre.before(button);
+  });}
+  prepare(document);new MutationObserver(()=>prepare(document)).observe(document.body,{childList:true,subtree:true});
+})();
+</script></body></html>
