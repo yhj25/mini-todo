@@ -27,7 +27,7 @@ export default function App() {
       </header>
       <section className="intro">
         <p className="eyebrow">나에게 집중하는 작은 기록</p>
-        <h1>나의 작은 할 일</h1>
+        <h1>나의 커다란 할 일</h1>
         <p>오늘 할 일을 저장하고, 끝낸 일에 표시해 보세요.</p>
       </section>
       {setupError ? (
